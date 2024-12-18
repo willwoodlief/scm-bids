@@ -1,0 +1,54 @@
+{
+    "name": "scm/scm-plugin-bid",
+    "description": "Keep track of bids, turn successful bids into projects",
+    "version": "1.0.0",
+    "keywords": [
+        "scm",
+        "laravel",
+        "admin",
+        "bids",
+        "plugin"
+    ],
+    "authors": [
+        {
+            "name": "Will Woodlief",
+            "email": "willwoodlief@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "spatie/laravel-package-tools": "^1.16.6"
+    },
+
+    "autoload": {
+        "psr-4": {
+            "Scm\\PluginBid\\": "src/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": "@composer run prepare"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Scm\\PluginBid\\ScmPluginBidProvider"
+            ],
+            "aliases": {
+                "ScmPluginBid": "Scm\\PluginBid\\ScmPluginBid"
+            },
+            "auto_publish_assets" :
+            {
+                "alias": "resources",
+                "relative_path":"resources/dist"
+            },
+            "plugin_active": "yes",
+            "database_migrations_folder": "database/migrations"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
