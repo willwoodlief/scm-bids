@@ -33,8 +33,8 @@ return new class extends Migration
                 ->nullOnDelete();
 
 
-            $table->double('latitude')->nullable(false)->default(0);
-            $table->double('longitude')->nullable(false)->default(0);
+            $table->double('latitude')->nullable()->default(null);
+            $table->double('longitude')->nullable()->default(null);
 
 
             $table->decimal('budget',10,2)
@@ -42,8 +42,6 @@ return new class extends Migration
                 ->default(null)
                 ->comment("Amount of the bid");
 
-            $table->date('start_date')->nullable(false);
-            $table->date('end_date')->nullable(false);
 
             $table->timestamps();
 

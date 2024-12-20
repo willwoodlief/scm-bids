@@ -8,10 +8,10 @@
 
     @section('main_content')
 
-        <div class="inner-content-body">
+        <div class="container container-xl mt-0">
 
             <!-- row -->
-            <div class="page-titles">
+            <div class="page-titles mb-2">
                 <ol class="breadcrumb">
                     <li>
                         <h5 class="bc-title">Bids</h5>
@@ -27,16 +27,28 @@
 
                     <li class="breadcrumb-item active">
                         <a href="{{route('scm-bid.admin.index')}}">
-                            Bids
+                            Bid Administration
                         </a>
                     </li>
                 </ol>
             </div>
 
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <a href="{{route('scm-bid.admin.bids.list')}}">
+                        Bid List
+                    </a>
+                </li>
+
+                <li class="list-group-item">
+                    <a href="{{route('scm-bid.admin.bids.new')}}">
+                        New Bid
+                    </a>
+                </li>
+            </ul>
 
 
-
-        </div> <!-- inner-content-body -->
+        </div> <!-- container container-xl -->
 
 
 

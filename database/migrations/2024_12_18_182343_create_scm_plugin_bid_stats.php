@@ -33,6 +33,23 @@ return new class extends Migration
                 ->cascadeOnUpdate()
                 ->nullOnDelete();
 
+            $table->foreignId('stats_contractor_id')
+                ->nullable(true)
+                ->default(null)
+                ->index()
+                ->comment("the contractor for the bid. If a contractor is deleted then the stats remain without it")
+                ->constrained('contractors')
+                ->cascadeOnUpdate()
+                ->nullOnDelete();
+
+            $table->foreignId('stats_user_id')
+                ->nullable()
+                ->default(null)
+                ->comment("the user who created this bid")
+                ->constrained('users')
+                ->cascadeOnUpdate()
+                ->nullOnDelete();
+
 
             $table->timestamp('bid_created_at')
                 ->nullable(true)

@@ -1,6 +1,6 @@
 <?php
 
-namespace Scm\PluginArchive\Requests;
+namespace Scm\PluginBid\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Route;
@@ -36,9 +36,7 @@ class BidSaveRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'contractor' => ['integer'],
-
-
+            'bid_contractor_id' => ['integer'],
             'bid_name' => ['string', 'max:255'],
             'address' => ['string', 'max:250'],
             'city' => ['string', 'max:100'],
@@ -46,10 +44,7 @@ class BidSaveRequest extends FormRequest
             'zip' => ['string', 'max:5'],
             'latitude' => ['numeric','nullable'],
             'longitude' => ['numeric','nullable'],
-
-            'budget' => ['string', 'max:50'],
-            'start_date' => ['date'],
-            'end_date' => ['date']
+            'budget' => ['numeric', 'min:1']
         ];
     }
 }

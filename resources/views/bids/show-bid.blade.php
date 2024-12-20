@@ -1,7 +1,6 @@
 @php
     /**
      * @var \Scm\PluginBid\Models\ScmPluginBidSingle $bid
-     * @var \App\Models\Contractor[] $contractors
      */
 @endphp
 
@@ -37,8 +36,8 @@
                     </li>
 
                     <li class="breadcrumb-item active">
-                        <a href="{{route('scm-bid.admin.bids.edit',['bid_id'=>$bid->id])}}">
-                            Edit Bid
+                        <a href="{{route('scm-bid.admin.bids.new')}}">
+                            Show Bid {{$bid->getName()}}
                         </a>
                     </li>
                 </ol>
@@ -47,18 +46,11 @@
             <div class="card">
                 <div class="card-header">
                     <h4 class="card-title">
-                        Edit {{$bid->getName()}}
+                        {{$bid->getName()}}
                     </h4>
                 </div>
                 <div class="card-body">
-                    @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/bid-form',[
-                        'bid'=>$bid,
-                        'contractors'=>$contractors
-                    ])
 
-                    @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/bid-add-files',[
-                        'bid'=>$bid
-                    ])
                 </div> <!-- /card-body -->
             </div> <!-- /card -->
 

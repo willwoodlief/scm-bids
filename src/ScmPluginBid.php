@@ -25,6 +25,10 @@ class ScmPluginBid
     protected PluginRef $ref;
 
     const THIS_PLUGIN_STORAGE_ROOT = 'plugins/scm-plugin-bid';
+    const PLUGIN_UPLOAD_DIRECTORY = 'uploads/plugins/scm-plugin-bid';
+
+    public function getPluginStorageRoot(): string { return static::THIS_PLUGIN_STORAGE_ROOT;}
+    public function getPluginUploadRoot(): string { return static::PLUGIN_UPLOAD_DIRECTORY;}
 
 
     public function unserializeContents(string $path_relative_storage) : mixed {

@@ -1,11 +1,16 @@
 <?php
 namespace Scm\PluginBid\Models;
+use App\Helpers\Utilities;
 use App\Models\Project;
 use App\Models\User;
+
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Auth;
+use Scm\PluginBid\Exceptions\ScmPluginBidException;
 
 
 /**
@@ -16,6 +21,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int owning_bid_id
  * @property int owning_project_id
  * @property int uploaded_by_user_id
+ *
+ *
  * @property int bid_file_size_bytes
  * @property int bid_file_is_image
 
@@ -43,6 +50,13 @@ class ScmPluginBidFile extends Model
 
     protected $table = 'scm_plugin_bid_files';
     public $timestamps = false;
+
+    protected static function booted(): void
+    {
+        static::deleted(function (ScmPluginBidFile $bid_file) {
+            $bid_file->cleanup_resources();
+        });
+    }
 
     public function file_bid() : BelongsTo {
         return $this->belongsTo(ScmPluginBidSingle::class,'owning_bid_id');
@@ -94,6 +108,91 @@ class ScmPluginBidFile extends Model
         return $build;
     }
 
+
+    /**
+     * @throws \Exception
+     */
+    public static function process_uploaded_file(ScmPluginBidSingle $bid, UploadedFile $file) : string {
+
+        $bid_file = null;
+        try {
+            Utilities::checkMaxLimitExceeded($file->getSize());
+
+            $is_image = str_contains('image',$file->getMimeType());
+
+            $dir = $bid->get_document_directory();
+            if ($is_image) {
+                $dir = $bid->get_image_directory();
+            }
+
+            $string_or_false = $file->storePublicly($dir,[
+                'visibility' => 'public',
+                'directory_visibility' => 'public'
+            ]);
+
+            if ($string_or_false === false) {
+                throw new ScmPluginBidException("Cannot save to $dir");
+            }
+
+
+            $bid_file = new ScmPluginBidFile();
+            $bid_file->owning_bid_id = $bid->id;
+            $bid_file->uploaded_by_user_id = Auth::id();
+            $bid_file->bid_file_extension = $file->getExtension();
+            $bid_file->bid_file_name = $file->hashName();
+            $bid_file->bid_file_human_name = $file->getClientOriginalName();
+            $bid_file->bid_file_size_bytes = $file->getSize();
+            $bid_file->bid_file_mime_type = $file->getMimeType();
+            $bid_file->bid_file_is_image = $is_image;
+            $bid_file->save();
+
+            return $bid_file->getAbsolutePath();
+
+        } catch (\Exception $what) {
+            if($bid_file) {unlink($bid_file->getAbsolutePath());}
+            throw $what;
+        }
+    }
+
+    public function getRelativePath() : ?string {
+        if (!$this->bid_file_name) {return null;}
+        if ($this->bid_file_is_image) {
+            return $this->file_bid->get_image_directory(). DIRECTORY_SEPARATOR . $this->bid_file_name;
+        } else {
+            return $this->file_bid->get_document_directory(). DIRECTORY_SEPARATOR . $this->bid_file_name;
+        }
+
+    }
+
+    public function getAbsolutePath() : ?string {
+        $relative = $this->getRelativePath();
+        if (!$relative) {return null;}
+        if ($this->bid_file_is_image) {
+            return realpath(app_path('app'. DIRECTORY_SEPARATOR .$relative));
+        } else {
+            return realpath(storage_path('app'. DIRECTORY_SEPARATOR .$relative));
+        }
+
+    }
+
+    public function get_url() : ?string {
+        $relative = $this->getRelativePath();
+        if (!$relative) {return null;}
+        return asset($relative);
+    }
+
+    public function cleanup_resources() {
+        $absolute_path = $this->getAbsolutePath();
+        if (!$absolute_path) {return;}
+
+        if (file_exists($absolute_path)) {
+            unlink($absolute_path);
+        }
+    }
+
+    public function getName() : string {
+        return $this->file_bid->getName().": ".$this->bid_file_human_name;
+    }
 
 
 }

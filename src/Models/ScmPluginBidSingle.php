@@ -1,13 +1,16 @@
 <?php
 namespace Scm\PluginBid\Models;
 use App\Models\Contractor;
+use App\Models\ProjectFile;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Http\UploadedFile;
 use Scm\PluginBid\Exceptions\ScmPluginBidException;
+use Scm\PluginBid\Facades\ScmPluginBid;
 
 
 /**
@@ -21,8 +24,6 @@ use Scm\PluginBid\Exceptions\ScmPluginBidException;
  * @property float longitude
  * @property float budget
 
- * @property string start_date
- * @property string end_date
  * @property string bid_name
  * @property string address
  * @property string city
@@ -49,6 +50,19 @@ class ScmPluginBidSingle extends Model
     protected $table = 'scm_plugin_bid_singles';
     public $timestamps = false;
 
+    protected $fillable = [
+        'bid_contractor_id',
+        'bid_name',
+        'address',
+        'city',
+        'state',
+        'zip',
+        'latitude',
+        'longitude',
+        'budget',
+        'start_date'
+    ];
+
     public function bid_contractor() : BelongsTo {
         return $this->belongsTo(Contractor::class,'bid_contractor_id');
     }
@@ -63,7 +77,11 @@ class ScmPluginBidSingle extends Model
         return $this->hasMany(ScmPluginBidFile::class,'owning_bid_id','id');
     }
 
-    public static function getBuilder(
+    public function getName() : string {
+        return $this->bid_name?: "Bid #$this->id";
+    }
+
+    public static function getBid(
         ?int $me_id = null,  ?int $contractor_id = null
     )
     : ScmPluginBidSingle
@@ -75,7 +93,9 @@ class ScmPluginBidSingle extends Model
             if ($contractor_id) { $reason .= " Using contractor id of $contractor_id.";}
             throw new ScmPluginBidException("Cannot find the bid $reason");
         }
+        return $what;
     }
+
     public static function getBuilderForBid(
         ?int $me_id = null,  ?int $contractor_id = null
     )
@@ -106,6 +126,36 @@ class ScmPluginBidSingle extends Model
 
 
         return $build;
+    }
+
+    const DOCUMENTS_FOLDER = 'documents';
+    const BIDS_FOLDER = 'bids';
+
+    public function get_document_directory() : string  {
+        if (!$this->id) { throw new ScmPluginBidException("Trying get bid document directory with no bid id");}
+        return ScmPluginBid::getPluginStorageRoot().DIRECTORY_SEPARATOR.static::BIDS_FOLDER.
+            DIRECTORY_SEPARATOR . $this->id . DIRECTORY_SEPARATOR . static::DOCUMENTS_FOLDER;
+    }
+
+    public function get_image_directory() : string  {
+        if (!$this->id) { throw new ScmPluginBidException("Trying get bid image directory with no bid id");}
+        return ScmPluginBid::getPluginUploadRoot().DIRECTORY_SEPARATOR.static::BIDS_FOLDER.
+            DIRECTORY_SEPARATOR . $this->id . DIRECTORY_SEPARATOR . static::DOCUMENTS_FOLDER;
+    }
+
+    /**
+     * @param UploadedFile $file
+     * @return string
+     * @throws \Exception
+     */
+    public function process_uploaded_file(UploadedFile $file) : string {
+        if (!$this->id) { throw new \LogicException("Trying to save a file to an unsaved bid");}
+        if($file->getSize() > ProjectFile::getMaxFileSize()) {
+            $human_max_filesize = \App\Helpers\Utilities::human_filesize(\App\Models\ProjectFile::getMaxFileSize());
+            $human_my_filesize = \App\Helpers\Utilities::human_filesize($file->getSize());
+            throw new ScmPluginBidException("Bid file too big. The max is $human_max_filesize but the file is $human_my_filesize");
+        }
+        return ScmPluginBidFile::process_uploaded_file($this,$file);
     }
 
 

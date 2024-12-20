@@ -17,8 +17,12 @@ use Illuminate\Support\Facades\Facade;
  * @uses \Scm\PluginBid\ScmPluginBid::getBladeRoot()
  * @uses \Scm\PluginBid\ScmPluginBid::unserializeContents()
  * @uses \Scm\PluginBid\ScmPluginBid::serializeContents()
+ * @uses \Scm\PluginBid\ScmPluginBid::getPluginStorageRoot()
+ * @uses \Scm\PluginBid\ScmPluginBid::getPluginUploadRoot()
  * @method static PluginRef getPluginRef()
  * @method static string getBladeRoot()
+ * @method static string getPluginStorageRoot()
+ * @method static string getPluginUploadRoot()
  * @method static mixed unserializeContents(string $path_relative_storage)
  * @method static void serializeContents(string $path_relative_storage,mixed $content)
  */
