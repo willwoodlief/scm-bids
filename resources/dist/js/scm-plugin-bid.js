@@ -25,7 +25,58 @@ jQuery(function($) {
                 }
         );
 
+    });
+
+    $(`body`).on('click',`.scm-plugin-bid-fail-action`,function() {
+        let title = this.title;
+        Swal.fire({
+            title: `${title} ?`,
+            icon: 'question',
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let url = this.dataset.url;
+                let method = this.dataset.method;
+                scm_do_ajax(url,method,{},
+                    /**
+                                 * @param {object} data
+                                 * @param {string} data.bid_list_url
+                                 * */
+                    function(data) {
+                        location.href = data.bid_list_url;
+                    }
+                );
+            }
+        })
+
     })
+
+    $(`body`).on('click',`.scm-plugin-bid-success-action`,function() {
+        let title = this.title;
+        Swal.fire({
+            title: `${title} ?`,
+            icon: 'question',
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                debugger;
+                let url = this.dataset.url;
+                let method = this.dataset.method;
+                scm_do_ajax(url,method,{},
+                    /**
+                                 * @param {object} data
+                                 * @param {string} data.project_edit_url
+                                 * */
+                    function(data) {
+                        location.href = data.project_edit_url;
+                    }
+                );
+            }
+        })
+
+    })
+
+
 
     /**
      * spinners can be inside the clicked area or outside of it, find the one inside first, then find the one closest to this

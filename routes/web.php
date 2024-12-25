@@ -59,7 +59,7 @@ Route::prefix('scm-bid')->group(function () {
 
                         Route::get('download/{file_id}', [\Scm\PluginBid\Controllers\ScmPluginBidAdminController::class, 'download_file'])
                             ->where('file_id', '[0-9]+')
-                            ->name('scm-bid.admin.bids.remove_file');
+                            ->name('scm-bid.admin.bids.download_file');
 
                     });
 

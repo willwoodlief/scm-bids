@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\UploadedFile;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use Scm\PluginBid\Exceptions\ScmPluginBidException;
 use Scm\PluginBid\Facades\ScmPluginBid;
 
@@ -29,6 +31,7 @@ use Scm\PluginBid\Facades\ScmPluginBid;
  * @property string city
  * @property string state
  * @property string zip
+ * @property string scratch_pad
  *
  *
  * @property string created_at
@@ -60,8 +63,32 @@ class ScmPluginBidSingle extends Model
         'latitude',
         'longitude',
         'budget',
-        'start_date'
+        'scratch_pad'
     ];
+
+    protected static function booted(): void
+    {
+        static::deleting(function (ScmPluginBidSingle $bid) {
+
+            if (!$bid->id) {
+                return false;
+            }
+
+            /**
+             * @var ScmPluginBidFile[] $bid_files
+             */
+            $bid_files = $bid->bid_files()->get();
+            foreach ($bid_files as $file) {
+                $file->delete();
+            }
+
+            return true; //allow deletion
+        });
+
+        static::deleted(function (ScmPluginBidSingle $bid) {
+            $bid->cleanup_resources();
+        });
+    }
 
     public function bid_contractor() : BelongsTo {
         return $this->belongsTo(Contractor::class,'bid_contractor_id');
@@ -131,6 +158,24 @@ class ScmPluginBidSingle extends Model
     const DOCUMENTS_FOLDER = 'documents';
     const BIDS_FOLDER = 'bids';
 
+    public function cleanup_resources() {
+        $relative_path = $this->get_document_directory();
+        $absolute_path = realpath(storage_path('app'. DIRECTORY_SEPARATOR .$relative_path));
+        if (!$absolute_path) {return;}
+
+        $it = new RecursiveDirectoryIterator($absolute_path, RecursiveDirectoryIterator::SKIP_DOTS);
+        $files = new RecursiveIteratorIterator($it,
+            RecursiveIteratorIterator::CHILD_FIRST);
+        foreach($files as $file) {
+            if ($file->isDir()){
+                rmdir($file->getPathname());
+            } else {
+                unlink($file->getPathname());
+            }
+        }
+        rmdir($absolute_path);
+    }
+
     public function get_document_directory() : string  {
         if (!$this->id) { throw new ScmPluginBidException("Trying get bid document directory with no bid id");}
         return ScmPluginBid::getPluginStorageRoot().DIRECTORY_SEPARATOR.static::BIDS_FOLDER.
@@ -158,6 +203,31 @@ class ScmPluginBidSingle extends Model
         return ScmPluginBidFile::process_uploaded_file($this,$file);
     }
 
+    /**
+     * @return ScmPluginBidFile[]
+     */
+    public function get_images() : array  {
+        $ret = [];
+        foreach ($this->bid_files as $file) {
+            if ($file->isImage()) {$ret[] = $file;}
+        }
+        return $ret;
+    }
+
+    /**
+     * @param int $project_id
+     * @param ScmPluginBidFile[] $old_bid_files
+     * @return ProjectFile[]
+     */
+    public function moveFilesToProject(int $project_id,array &$old_bid_files ) : array {
+        $ret = [];
+        foreach ($this->bid_files as $file) {
+            $old_bid_files[] = $file;
+            $ret[] = $file->copyToProjectFile($project_id);
+            $file->delete();
+        }
+        return $ret;
+    }
 
 
 }

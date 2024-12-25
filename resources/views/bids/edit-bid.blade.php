@@ -41,7 +41,11 @@
                             Edit Bid
                         </a>
                     </li>
+
                 </ol>
+                <a href="{{route('scm-bid.admin.bids.show',['bid_id'=>$bid->id])}}" class="btn btn-secondary float-end">
+                    Show {{$bid->getName()}}
+                </a>
             </div>
 
             <div class="card">
@@ -51,14 +55,21 @@
                     </h4>
                 </div>
                 <div class="card-body">
-                    @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/bid-form',[
+                    @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/shared/bid-form',[
                         'bid'=>$bid,
                         'contractors'=>$contractors
                     ])
 
-                    @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/bid-add-files',[
-                        'bid'=>$bid
+                    @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/shared/file-list',[
+                       'bid'=>$bid,'b_edit'=>true
                     ])
+
+                    <div class="mt-5">
+                        @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/edit/bid-add-files',[
+                       'bid'=>$bid
+                   ])
+                    </div>
+
                 </div> <!-- /card-body -->
             </div> <!-- /card -->
 

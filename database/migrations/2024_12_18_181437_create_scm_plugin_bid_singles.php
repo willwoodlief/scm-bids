@@ -50,6 +50,7 @@ return new class extends Migration
             $table->string('city',100)->nullable(false);
             $table->string('state',2)->nullable(false);
             $table->string('zip',5)->nullable(false);
+            $table->text('scratch_pad')->nullable()->default(null)->comment("to make notes");
 
         });
 

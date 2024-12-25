@@ -16,6 +16,6 @@
 </form>
 <script>
     jQuery(function() {
-        let myDropzone = new Dropzone("form#bid-dropzone", { url: "{{route('scm-bid.admin.bids.add_files',['bid_id'=>$bid->id])}}"});
+        new Dropzone("form#bid-dropzone", { url: "{{route('scm-bid.admin.bids.add_files',['bid_id'=>$bid->id])}}"});
     });
 </script>

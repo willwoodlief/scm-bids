@@ -62,6 +62,14 @@
                 </select>
                 <x-input-error :messages="$errors->get('bid_contractor_id')" />
             </div>
+
+            <div class="col-12 mb-3">
+                <label class="form-label" for="scratch_pad">Scratch Pad</label>
+                <textarea name="scratch_pad" id="scratch_pad" class="form-control" autocomplete="off"
+                          rows="10"
+                >{{old('scratch_pad',$bid->scratch_pad)}}</textarea>
+                <x-input-error :messages="$errors->get('scratch_pad')" />
+            </div>
             <div>
                 <input type="hidden" class="form-control" id="lat" name="latitude" value="{{old('latitude',$bid->latitude)}}">
                 <x-input-error :messages="$errors->get('latitude')" />

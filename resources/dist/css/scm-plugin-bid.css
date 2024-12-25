@@ -1,2 +1,36 @@
 
 /* css for admin bid plugin */
+
+
+.card-use-box {
+    text-align: center; }
+.card-use-box .crd-bx-img {
+    position: relative;
+    width: 100px;
+    margin: auto; }
+.card-use-box .crd-bx-img .active {
+    width: 15px;
+    height: 15px;
+    background: #3AC977;
+    border-radius: 50%;
+    left: 6rem;
+    position: absolute;
+    bottom: 0.4rem; }
+.card-use-box .crd-bx-img .active.deactive {
+    background: #FF5E5E; }
+.card-use-box .crd-bx-img img {
+    border: 7px solid rgba(62, 95, 206, 0.08); }
+
+.card__info {
+    display: flex;
+    align-items: center;
+    justify-content: center; }
+.card__info li .card__info__stats {
+    display: block;
+    color: #0d99ff;
+    font-size: 1.2rem;
+    font-weight: 500;
+    padding: 0 40px; }
+@media only screen and (max-width: 87.5rem) {
+    .card__info li .card__info__stats {
+        padding: 0 25px; } }

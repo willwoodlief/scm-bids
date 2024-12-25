@@ -104,6 +104,7 @@
                                         <button type="button" class="btn btn-sm btn-outline-success scm-plugin-bid-success-action "
                                                 data-bid_name="{{str_replace('"','&quot;',$bid->getName())}}"
                                                 data-url="{{route('scm-bid.admin.bids.successful',['bid_id'=>$bid->id])}}"
+                                                data-method="post"
                                                 title="Make into a project {{str_replace('"','&quot;',$bid->getName())}}"
                                         >
                                             <i class="bi bi-play-fill"></i>
@@ -112,7 +113,8 @@
                                         <button type="button" class="btn btn-sm btn-outline-danger scm-plugin-bid-fail-action "
                                                 data-bid_name="{{str_replace('"','&quot;',$bid->getName())}}"
                                                 data-url="{{route('scm-bid.admin.bids.failed',['bid_id'=>$bid->id])}}"
-                                                title="Remove bid as unsuccessful {{str_replace('"','&quot;',$bid->getName())}}"
+                                                data-method="delete"
+                                                title="Remove bid as unsuccessful: {{str_replace('"','&quot;',$bid->getName())}}"
                                         >
                                             <i class="bi bi-x-octagon-fill"></i>
                                         </button>

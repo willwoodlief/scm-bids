@@ -23,7 +23,11 @@ use Illuminate\Support\Facades\DB;
  * @property string bid_created_at
  * @property string bid_success_at
  * @property string bid_failed_at
-
+ *
+ * @property int bid_created_at_ts
+ * @property int bid_success_at_ts
+ * @property int bid_failed_at_ts
+ *
  * @property Project stat_project
  * @property ScmPluginBidSingle stat_bid
  * @property Contractor stat_contractor
@@ -59,8 +63,9 @@ class ScmPluginBidStat extends Model
     {
 
         $build = static::select('scm_plugin_bid_stats.*')
-            ->selectRaw("UNIX_TIMESTAMP(scm_plugin_bid_stats.created_at) as created_at_ts")
-            ->selectRaw("UNIX_TIMESTAMP(scm_plugin_bid_stats.updated_at) as updated_at_ts")
+            ->selectRaw("UNIX_TIMESTAMP(scm_plugin_bid_stats.bid_created_at) as bid_created_at_ts")
+            ->selectRaw("UNIX_TIMESTAMP(scm_plugin_bid_stats.bid_success_at) as bid_success_at_ts")
+            ->selectRaw("UNIX_TIMESTAMP(scm_plugin_bid_stats.bid_failed_at) as bid_failed_at_ts")
 
             /** @uses static::stat_project() */
             ->with('stat_project')
@@ -99,6 +104,40 @@ class ScmPluginBidStat extends Model
         $node->stats_user_id = $bid->bid_created_by_user_id;
         $node->save();
         DB::statement("Update scm_plugin_bid_stats set bid_created_at = NOW() WHERE id = ?",[$node->id]);
+        $node->refresh();
+        return $node;
+    }
+
+    public static function markFailedBid(ScmPluginBidSingle $bid) : ScmPluginBidStat {
+        /** @var ScmPluginBidStat $node */
+        $node = static::getBuilderForBidStat(bid_id: $bid->id)->first();
+        if (!$node) {
+            $node = new ScmPluginBidStat();
+            $node->stats_bid_id = $bid->id;
+            $node->stats_contractor_id = $bid->bid_contractor_id;
+            $node->budget = $bid->budget;
+            $node->stats_user_id = $bid->bid_created_by_user_id;
+            $node->save();
+        }
+
+        DB::statement("Update scm_plugin_bid_stats set bid_failed_at = NOW() WHERE id = ?",[$node->id]);
+        $node->refresh();
+        return $node;
+    }
+
+    public static function markSuccessfulBid(ScmPluginBidSingle $bid,int $project_id) : ScmPluginBidStat {
+        /** @var ScmPluginBidStat $node */
+        $node = static::getBuilderForBidStat(bid_id: $bid->id)->first();
+        if (!$node) {
+            $node = new ScmPluginBidStat();
+            $node->stats_bid_id = $bid->id;
+            $node->stats_contractor_id = $bid->bid_contractor_id;
+            $node->budget = $bid->budget;
+            $node->stats_user_id = $bid->bid_created_by_user_id;
+            $node->save();
+        }
+
+        DB::statement("Update scm_plugin_bid_stats set bid_success_at = NOW(),stats_project_id = ? WHERE id = ?",[$project_id,$node->id]);
         $node->refresh();
         return $node;
     }

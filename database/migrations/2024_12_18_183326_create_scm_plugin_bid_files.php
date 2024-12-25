@@ -51,10 +51,11 @@ return new class extends Migration
                 ->comment("The size of the file in 8 bit bytes")
                 ->index();
 
-            $table->boolean('bid_file_is_image')
+            $table->string('bid_file_category',15)
+                ->index()
                 ->nullable(false)
-                ->default(0)
-                ->comment("is image if non zero");
+                ->default(\Scm\PluginBid\Models\Enums\TypeOfAcceptedFile::UNKNOWN->value)
+                ->comment("the type of file that is verified here");
 
             $table->timestamps();
 

@@ -2,6 +2,7 @@
 namespace Scm\PluginBid\Models;
 use App\Helpers\Utilities;
 use App\Models\Project;
+use App\Models\ProjectFile;
 use App\Models\User;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -10,7 +11,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Scm\PluginBid\Exceptions\ScmPluginBidException;
+use Scm\PluginBid\Models\Enums\TypeOfAcceptedFile;
 
 
 /**
@@ -24,7 +27,7 @@ use Scm\PluginBid\Exceptions\ScmPluginBidException;
  *
  *
  * @property int bid_file_size_bytes
- * @property int bid_file_is_image
+ * @property TypeOfAcceptedFile bid_file_category
 
 
  * @property string bid_file_extension
@@ -51,12 +54,21 @@ class ScmPluginBidFile extends Model
     protected $table = 'scm_plugin_bid_files';
     public $timestamps = false;
 
+    protected $casts = [
+        'bid_file_category' => TypeOfAcceptedFile::class,
+    ];
+
+
     protected static function booted(): void
     {
         static::deleted(function (ScmPluginBidFile $bid_file) {
             $bid_file->cleanup_resources();
         });
     }
+
+    protected ?ProjectFile $project_file = null;
+
+    public function getProjectFile() : ?ProjectFile { return $this->project_file;}
 
     public function file_bid() : BelongsTo {
         return $this->belongsTo(ScmPluginBidSingle::class,'owning_bid_id');
@@ -117,11 +129,13 @@ class ScmPluginBidFile extends Model
         $bid_file = null;
         try {
             Utilities::checkMaxLimitExceeded($file->getSize());
-
-            $is_image = str_contains('image',$file->getMimeType());
-
+            $file_category = TypeOfAcceptedFile::calculateFileCategory($file);
+            if ($file_category === TypeOfAcceptedFile::UNKNOWN) {
+                throw new ScmPluginBidException("Unknown file type: ".
+                    $file->getMimeType() . " for ". $file->getClientOriginalName());
+            }
             $dir = $bid->get_document_directory();
-            if ($is_image) {
+            if ($file_category === TypeOfAcceptedFile::IMAGE) {
                 $dir = $bid->get_image_directory();
             }
 
@@ -143,8 +157,9 @@ class ScmPluginBidFile extends Model
             $bid_file->bid_file_human_name = $file->getClientOriginalName();
             $bid_file->bid_file_size_bytes = $file->getSize();
             $bid_file->bid_file_mime_type = $file->getMimeType();
-            $bid_file->bid_file_is_image = $is_image;
+            $bid_file->bid_file_category = $file_category;
             $bid_file->save();
+
 
             return $bid_file->getAbsolutePath();
 
@@ -154,9 +169,11 @@ class ScmPluginBidFile extends Model
         }
     }
 
+
+
     public function getRelativePath() : ?string {
         if (!$this->bid_file_name) {return null;}
-        if ($this->bid_file_is_image) {
+        if ($this->isImage()) {
             return $this->file_bid->get_image_directory(). DIRECTORY_SEPARATOR . $this->bid_file_name;
         } else {
             return $this->file_bid->get_document_directory(). DIRECTORY_SEPARATOR . $this->bid_file_name;
@@ -167,12 +184,7 @@ class ScmPluginBidFile extends Model
     public function getAbsolutePath() : ?string {
         $relative = $this->getRelativePath();
         if (!$relative) {return null;}
-        if ($this->bid_file_is_image) {
-            return realpath(app_path('app'. DIRECTORY_SEPARATOR .$relative));
-        } else {
-            return realpath(storage_path('app'. DIRECTORY_SEPARATOR .$relative));
-        }
-
+        return realpath(storage_path('app'. DIRECTORY_SEPARATOR .$relative));
     }
 
     public function get_url() : ?string {
@@ -193,6 +205,48 @@ class ScmPluginBidFile extends Model
     public function getName() : string {
         return $this->file_bid->getName().": ".$this->bid_file_human_name;
     }
+
+    public function isImage() {
+        return $this->bid_file_category === TypeOfAcceptedFile::IMAGE;
+    }
+
+    /**
+     * Set disk space to 0 before we copy it over so do not hit storage quotas when both exist
+     * @param int $project_id
+     * @return ProjectFile
+     */
+    public function copyToProjectFile(int $project_id) : ProjectFile {
+        $remember_disk_space_bytes = $this->bid_file_size_bytes;
+        $this->bid_file_size_bytes = 0;
+        $this->save();
+
+        $old_path = $this->getRelativePath();
+        $project_directory = Project::calcuate_document_directory($project_id);
+        $abs_project_doc_path = Project::create_document_directory($project_id);
+        Utilities::markUnusedVar($abs_project_doc_path);
+        $new_path = $project_directory . DIRECTORY_SEPARATOR . $this->bid_file_name;
+
+        Storage::disk()->move($old_path, $new_path);
+        chmod($project_directory, 0755);
+        Storage::setVisibility($new_path, 'public');
+
+
+        $project_file = new ProjectFile();
+        $project_file->project_id = $project_id;
+        $project_file->uploaded_by_user_id = $this->uploaded_by_user_id;
+        $project_file->is_secure = ProjectFile::SECURITY_STATUS_IS_NORMAL;
+
+
+        $project_file->file_extension = $this->bid_file_extension;
+        $project_file->file_name = $this->bid_file_name;
+        $project_file->file_human_name = $this->bid_file_human_name;
+        $project_file->file_size_bytes = $remember_disk_space_bytes;
+        $project_file->file_mime_type = $this->bid_file_mime_type;
+        $project_file->save();
+        $this->project_file = $project_file;
+        return $project_file;
+    }
+
 
 
 }

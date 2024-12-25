@@ -42,6 +42,7 @@ class BidSaveRequest extends FormRequest
             'city' => ['string', 'max:100'],
             'state' => ['string', 'max:2'],
             'zip' => ['string', 'max:5'],
+            'scratch_pad' => ['string', 'nullable','max:64000'],
             'latitude' => ['numeric','nullable'],
             'longitude' => ['numeric','nullable'],
             'budget' => ['numeric', 'min:1']

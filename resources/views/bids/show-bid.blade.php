@@ -36,11 +36,15 @@
                     </li>
 
                     <li class="breadcrumb-item active">
-                        <a href="{{route('scm-bid.admin.bids.new')}}">
+                        <a href="{{route('scm-bid.admin.bids.show',['bid_id'=>$bid->id])}}">
                             Show Bid {{$bid->getName()}}
                         </a>
                     </li>
                 </ol>
+
+                <a href="{{route('scm-bid.admin.bids.edit',['bid_id'=>$bid->id])}}" class="btn btn-secondary float-end">
+                    Edit {{$bid->getName()}}
+                </a>
             </div>
 
             <div class="card">
@@ -48,8 +52,62 @@
                     <h4 class="card-title">
                         {{$bid->getName()}}
                     </h4>
+
+                    <button type="button" class="btn btn-outline-success scm-plugin-bid-success-action "
+                            data-bid_name="{{str_replace('"','&quot;',$bid->getName())}}"
+                            data-url="{{route('scm-bid.admin.bids.successful',['bid_id'=>$bid->id])}}"
+                            data-method="post"
+                            title="Make into a project {{str_replace('"','&quot;',$bid->getName())}}"
+                    >
+                        Success!
+                        <i class="bi bi-play-fill"></i>
+                    </button>
+
+                    <button type="button" class="btn  btn-outline-danger scm-plugin-bid-fail-action "
+                            data-bid_name="{{str_replace('"','&quot;',$bid->getName())}}"
+                            data-url="{{route('scm-bid.admin.bids.failed',['bid_id'=>$bid->id])}}"
+                            data-method="delete"
+                            title="Remove bid as unsuccessful: {{str_replace('"','&quot;',$bid->getName())}}"
+                    >
+                        Failed
+                        <i class="bi bi-x-octagon-fill"></i>
+                    </button>
                 </div>
                 <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 col-md-6">
+                            @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/show/contractor-unit',[
+                               'contractor'=>$bid->bid_contractor
+                            ])
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/show/bid-unit',[
+                               'bid'=>$bid
+                            ])
+                        </div>
+
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div style="white-space: pre">{{$bid->scratch_pad}}</div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+
+                    @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/shared/file-list',[
+                       'bid'=>$bid,'b_edit'=>false
+                    ])
+
+                    <div class="row mt-4">
+                        @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/show/file-images',[
+                              'bid'=>$bid
+                           ])
+                    </div>
 
                 </div> <!-- /card-body -->
             </div> <!-- /card -->

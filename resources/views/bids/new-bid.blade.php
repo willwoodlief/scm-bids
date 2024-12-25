@@ -51,7 +51,7 @@
                     </h4>
                 </div>
                 <div class="card-body">
-                    @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/bid-form',[
+                    @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/shared/bid-form',[
                         'bid'=>$bid,
                         'contractors'=>$contractors
                     ])
