@@ -4,6 +4,8 @@ namespace Scm\PluginBid;
 
 use App\Plugins\Plugin;
 
+use Scm\PluginBid\Helpers\PluginPermissions;
+use Scm\PluginBid\Models\ScmPluginBidSingle;
 use TorMorten\Eventy\Facades\Eventy;
 use Scm\PluginBid\Facades\ScmPluginBid;
 
@@ -24,10 +26,6 @@ class PluginLogic extends Plugin {
 
     }
 
-
-
-
-
     /**
      * Runs once at plugin startup, registers some listeners
      *
@@ -36,6 +34,7 @@ class PluginLogic extends Plugin {
      */
     public function initialize()
     {
+
         Eventy::addFilter(Plugin::FILTER_FRAME_ADMIN_LINKS, function( string $extra_admin_menu_stuff) {
             $item =view(ScmPluginBid::getBladeRoot().'::hooks/admin/entry-for-this',[])->render();
             return $extra_admin_menu_stuff."\n". $item;
@@ -71,5 +70,80 @@ class PluginLogic extends Plugin {
         }, 20, 1);
 
 
+        /*
+           Permissions below
+          ❚█══█❚❚█══█❚❚█══█❚❚█══█❚❚█══█❚❚█══█❚❚█══█❚❚█══█❚❚█══█❚❚█══█❚❚█══█❚❚█══█❚❚█══█❚❚█══█❚❚█══█❚❚█══█❚❚█══█❚❚█══█❚
+       */
+
+
+        Eventy::addFilter(Plugin::FILTER_ALL_ROLE_CATEGORIES, function( array $role_categories )
+        : array
+        {
+            foreach (PluginPermissions::getAllCategories() as $cat) {$role_categories[] = $cat;}
+            return $role_categories;
+        }, 20, 1);
+
+
+        Eventy::addFilter(Plugin::FILTER_ALL_ROLE_CATEGORIES_FOR_USER, function( array $role_categories,\App\Models\User $user )
+
+        : array
+        {
+             foreach (PluginPermissions::getUserCategories($user) as $cat) {$role_categories[] = $cat;}
+             return $role_categories;
+        }, 20, 2);
+
+
+         Eventy::addFilter(Plugin::FILTER_CATEGORY_PERMISSIONS, function(array $role_permissions, string $category_name )
+         : array
+         {
+             foreach (PluginPermissions::getAllPermissions($category_name) as $cat) {$role_permissions[] = $cat;}
+             return $role_permissions;
+         }, 20, 2);
+
+
+
+
+
+         Eventy::addAction(Plugin::ACTION_UPDATE_USER_ROLES, function( \App\Models\User $user ,array $category_names ): void {
+              //update any roles (the permissions will be applied when the ACTION_UPDATE_APPLIED_PERMISSIONS is called )
+             PluginPermissions::saveRoles($category_names,$user);
+         }, 20, 2);
+
+
+
+         Eventy::addFilter(Plugin::FILTER_ROLE_HUMAN_UNIT_TYPE,
+            function( ?string $human_name, string $machine_unit_type )
+            : string
+            {
+                if ($machine_unit_type === PluginPermissions::PERMISSION_BID_UNIT_NAME) {
+                    return PluginPermissions::PERMISSION_BID_UNIT_HUMAN_NAME;
+                }
+                return $human_name;
+            }, 20, 2);
+
+
+         Eventy::addFilter(Plugin::FILTER_ROLE_HUMAN_UNIT_ID,
+            function( ?string $human_name, string $machine_unit_type,int $unit_id )
+            : string
+            {
+                  if ($machine_unit_type === PluginPermissions::PERMISSION_BID_UNIT_NAME) {
+                      /** @var ScmPluginBidSingle $bid */
+                      $bid =   ScmPluginBidSingle::find($unit_id);
+                      return $bid?->getName();
+                  }
+                  return $human_name;
+               },
+            20, 3);
+
+         Eventy::addFilter(Plugin::FILTER_ROLE_PERMISSION_MODEL,
+            function( ?\Illuminate\Database\Eloquent\Model $found, string $machine_unit_type,int $unit_id )
+            : string
+            {
+                if ($machine_unit_type === PluginPermissions::PERMISSION_BID_UNIT_NAME) { return ScmPluginBidSingle::find($unit_id);}
+                return $found;
+            }, 20, 3);
+
     }
+
+
 }

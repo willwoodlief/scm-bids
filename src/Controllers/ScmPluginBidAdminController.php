@@ -13,7 +13,6 @@ use Illuminate\Routing\Controller as BaseController;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Exception\NotFoundException;
 use Scm\PluginBid\Exceptions\ScmPluginBidException;
 use Scm\PluginBid\Models\ScmPluginBidFile;
 use Scm\PluginBid\Requests\BidSaveRequest;
@@ -178,8 +177,8 @@ class ScmPluginBidAdminController extends BaseController
      */
     public function bid_successful(int $bid_id,Request $request) {
         $bid = ScmPluginBidSingle::getBid(me_id: $bid_id);
-        //todo create project, delete bid, update stats, redirect to project edit page
-        $project_files = [];
+        //create project, delete bid, update stats, redirect to project edit page
+
         /** @var ScmPluginBidFile[] $old_bid_files */
         $old_bid_files = [];
         try {
@@ -214,6 +213,7 @@ class ScmPluginBidAdminController extends BaseController
                 return redirect()->route('project.edit',['project_id'=>$project_id]);
             }
         } catch (\Exception $e) {
+            //if error, move the bid files back so those still work (don't loose files)
             foreach ($old_bid_files as $older_bid) {
                 $project_file = $older_bid->getProjectFile();
                 if ($project_file) {

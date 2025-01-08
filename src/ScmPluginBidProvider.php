@@ -10,7 +10,7 @@ use Spatie\LaravelPackageTools\PackageServiceProvider;
 class ScmPluginBidProvider extends PackageServiceProvider
 {
 
-
+    const PLUGIN_NAME = 'scm-plugin-bid';
     const VIEW_BLADE_ROOT = 'ScmPluginBid';
 
 
@@ -18,7 +18,7 @@ class ScmPluginBidProvider extends PackageServiceProvider
     {
 
         $package
-            ->name('scm-plugin-bid')
+            ->name(static::PLUGIN_NAME)
             ->hasConfigFile()
 
             ->hasViews(static::VIEW_BLADE_ROOT)
@@ -27,7 +27,8 @@ class ScmPluginBidProvider extends PackageServiceProvider
             ->hasMigrations(
 '2024_12_18_181437_create_scm_plugin_bid_singles',
                 '2024_12_18_182343_create_scm_plugin_bid_stats',
-                '2024_12_18_183326_create_scm_plugin_bid_files'
+                '2024_12_18_183326_create_scm_plugin_bid_files',
+                '2025_01_08_105408_add_permissions_for_bids'
             )
 
             ->hasInstallCommand(function(InstallCommand $command) {
@@ -48,6 +49,7 @@ class ScmPluginBidProvider extends PackageServiceProvider
 
     public function packageBooted()
     {
+
         $this->plugin_logic = new PluginLogic();
         $this->plugin_logic->initialize();
 
