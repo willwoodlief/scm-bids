@@ -39,14 +39,14 @@ class PluginPermissions
 
     const BID_PERMISSIONS = [
 
-        self::PERMISSION_BID_CREATE => ['human_name'=>'Create bids','is_permission_admin'=>true],
-        self::PERMISSION_BID_ASSIGN => ['human_name'=>'Allow user to view and/or edit a bid','is_permission_admin'=>true],
-        self::PERMISSION_BID_EDIT => ['human_name'=>'Edit bids','is_permission_admin'=>true],
-        self::PERMISSION_BID_FAIL => ['human_name'=>'Fail bids and delete them','is_permission_admin'=>true],
-        self::PERMISSION_BID_PROMOTE => ['human_name'=>'Promote bids to projects','is_permission_admin'=>true],
-        self::PERMISSION_BID_VIEW => ['human_name'=>'View bids'],
-        self::PERMISSION_BID_PER_VIEW => ['human_name'=>'View a bid','per_unit_of'=>self::PERMISSION_BID_UNIT_NAME],
-        self::PERMISSION_BID_PER_EDIT => ['human_name'=>'Edit a bid','per_unit_of'=>self::PERMISSION_BID_UNIT_NAME],
+        self::PERMISSION_BID_CREATE => ['human_name'=>'Create bids','permission_level'=>6],
+        self::PERMISSION_BID_ASSIGN => ['human_name'=>'Allow user to view and/or edit a bid','permission_level'=>6],
+        self::PERMISSION_BID_EDIT => ['human_name'=>'Edit bids','permission_level'=>5],
+        self::PERMISSION_BID_FAIL => ['human_name'=>'Fail bids and delete them','permission_level'=>5],
+        self::PERMISSION_BID_PROMOTE => ['human_name'=>'Promote bids to projects','permission_level'=>5],
+        self::PERMISSION_BID_VIEW => ['human_name'=>'View bids','permission_level'=>5],
+        self::PERMISSION_BID_PER_VIEW => ['human_name'=>'View a bid','per_unit_of'=>self::PERMISSION_BID_UNIT_NAME,'permission_level'=>5],
+        self::PERMISSION_BID_PER_EDIT => ['human_name'=>'Edit a bid','per_unit_of'=>self::PERMISSION_BID_UNIT_NAME,'permission_level'=>5],
     ];
 
 
@@ -83,11 +83,11 @@ class PluginPermissions
 
     public static function doRemove() {
         //delete the categories and permissions and the rules, roles, and applied permissions will go away for them
-        foreach (UserRolePermission::where('permission_human_name',ScmPluginBidProvider::PLUGIN_NAME) as $doomed_permission) {
+        foreach (UserRolePermission::where('managing_plugin_name',ScmPluginBidProvider::PLUGIN_NAME)->get() as $doomed_permission) {
             $doomed_permission->delete();
         }
 
-        foreach (UserRoleCategory::where('permission_human_name',ScmPluginBidProvider::PLUGIN_NAME) as $doomed_permission) {
+        foreach (UserRoleCategory::where('managing_plugin_name',ScmPluginBidProvider::PLUGIN_NAME)->get() as $doomed_permission) {
             $doomed_permission->delete();
         }
     }
