@@ -19,9 +19,9 @@ class PluginPermissions
     const BID_HELPER_CATEGORY_NAME = 'bid-helper';
 
     const BID_CATEGORIES = [
-        self::BID_EDITOR_CATEGORY_NAME => 'Create, edit, process bids',
-        self::BID_VIEWER_CATEGORY_NAME => 'View and maybe edit bids',
-        self::BID_HELPER_CATEGORY_NAME => 'View or edit bids on a case by case basis',
+        self::BID_EDITOR_CATEGORY_NAME => 'Manage bids',
+        self::BID_VIEWER_CATEGORY_NAME => 'View bids',
+        self::BID_HELPER_CATEGORY_NAME => 'View or edit some bids',
     ];
     const PERMISSION_BID_UNIT_NAME = 'bid';
     const PERMISSION_BID_UNIT_HUMAN_NAME = 'Bid';
@@ -98,8 +98,11 @@ class PluginPermissions
     }
 
     /** @return GenericPermission[] */
-    public static function  getAllPermissions(?string $category_name = null) {
-        return UserRoleRule::getPermissionsForCategory(category_name: $category_name,for_plugin:ScmPluginBidProvider::PLUGIN_NAME);
+    public static function  getPermissions(?string $category_name = null,?string $only_permission_name = null) {
+        if ($category_name) {
+            return UserRoleRule::getPermissionsForCategory(category_name: $category_name,for_plugin:ScmPluginBidProvider::PLUGIN_NAME);
+        }
+        return UserRolePermission::getPermissions(only_permission_name: $only_permission_name,for_plugin:ScmPluginBidProvider::PLUGIN_NAME);
     }
 
     /** @return GenericCategory[] */
@@ -115,8 +118,18 @@ class PluginPermissions
         $user->save_roles(category_names: $category_names,by_user: Utilities::get_logged_user(),for_plugin: ScmPluginBidProvider::PLUGIN_NAME);
     }
 
-    public static function updateApplied(?\App\Models\User $user = null, ?int $per_unit_id = null) {
-        return UserRoleApply::updateAppliedPermissions(user:$user,per_unit_of: static::PERMISSION_BID_UNIT_NAME,
-            per_unit_id: $per_unit_id,for_plugin:ScmPluginBidProvider::PLUGIN_NAME );
+    public static function  addPermissionToCategory(string $category_name,string $permission_name) :void {
+        UserRoleRule::addPermissionToCategory(category_name: $category_name,permission_name: $permission_name,for_plugin: ScmPluginBidProvider::PLUGIN_NAME,b_call_action: false);
     }
+
+    public static function  removePermissionFromCategory(string $category_name,string $permission_name) :void {
+        UserRoleRule::removePermissionFromCategory(category_name: $category_name,permission_name: $permission_name,for_plugin: ScmPluginBidProvider::PLUGIN_NAME,b_call_action: false);
+    }
+
+    public static function  removeAppliedResource(?\App\Models\User $user = null,?string $permission_name = null,?string $per_unit_of = null, ?int $per_unit_id = null)
+    :void
+    {
+        UserRoleApply::removeAppliedResource(user: $user,permission_name: $permission_name,per_unit_of: $per_unit_of,per_unit_id: $per_unit_id,b_call_action: false);
+    }
+
 }

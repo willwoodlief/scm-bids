@@ -11,6 +11,7 @@ class ScmPluginBidProvider extends PackageServiceProvider
 {
 
     const PLUGIN_NAME = 'scm-plugin-bid';
+    const HUMAN_NAME = 'Bids';
     const VIEW_BLADE_ROOT = 'ScmPluginBid';
 
 

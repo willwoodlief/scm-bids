@@ -96,10 +96,17 @@ class PluginLogic extends Plugin {
          Eventy::addFilter(Plugin::FILTER_CATEGORY_PERMISSIONS, function(array $role_permissions, string $category_name )
          : array
          {
-             foreach (PluginPermissions::getAllPermissions($category_name) as $cat) {$role_permissions[] = $cat;}
+             foreach (PluginPermissions::getPermissions($category_name) as $perm) {$role_permissions[] = $perm;}
              return $role_permissions;
          }, 20, 2);
 
+
+        Eventy::addFilter(Plugin::FILTER_PERMISSIONS, function(array $role_permissions,?string $only_permission_name )
+        : array
+        {
+            foreach (PluginPermissions::getPermissions(only_permission_name:$only_permission_name ) as $perm) {$role_permissions[] = $perm;}
+            return $role_permissions;
+        }, 20, 2);
 
 
 
@@ -142,6 +149,44 @@ class PluginLogic extends Plugin {
                 if ($machine_unit_type === PluginPermissions::PERMISSION_BID_UNIT_NAME) { return ScmPluginBidSingle::find($unit_id);}
                 return $found;
             }, 20, 3);
+
+
+         Eventy::addAction(Plugin::ACTION_REMOVE_PERMISSION_FROM_CATEGORY,
+            function( string $category_name, string $permission_name )
+            : void
+            {
+                PluginPermissions::removePermissionFromCategory(category_name: $category_name,permission_name: $permission_name);
+            }, 20, 2);
+
+
+         Eventy::addAction(Plugin::ACTION_ADD_PERMISSION_TO_CATEGORY,
+            function( string $category_name, string $permission_name )
+            : void
+            {
+                PluginPermissions::addPermissionToCategory(category_name: $category_name,permission_name: $permission_name);
+            }, 20, 2);
+
+
+         Eventy::addAction(Plugin::ACTION_REMOVE_APPLIED_RESOURCE,
+            function(   ?\App\Models\User $user = null,?string $permission_name = null,
+                        ?string $per_unit_of = null, ?int $per_unit_id = null )
+            : void
+            {
+                PluginPermissions::removeAppliedResource(user: $user,permission_name: $permission_name,per_unit_of: $per_unit_of,per_unit_id: $per_unit_id);
+            }, 20, 4);
+
+
+         Eventy::addFilter(Plugin::FILTER_PLUGIN_HUMAN_PLUGIN_NAME,
+            function( string $human_name, string $plugin_name )
+            : string
+            {
+                if ($plugin_name === ScmPluginBidProvider::PLUGIN_NAME) {
+                      return ScmPluginBidProvider::HUMAN_NAME;
+                  }
+                return $human_name;
+            }, 20, 2);
+
+
 
     }
 
