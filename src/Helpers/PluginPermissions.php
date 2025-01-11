@@ -17,11 +17,13 @@ class PluginPermissions
     const BID_EDITOR_CATEGORY_NAME = 'bid-editor';
     const BID_VIEWER_CATEGORY_NAME = 'bid-viewer';
     const BID_HELPER_CATEGORY_NAME = 'bid-helper';
+    const CUSTOMIZABLE_CATEGORY_NAME = 'bid-customize';
 
     const BID_CATEGORIES = [
         self::BID_EDITOR_CATEGORY_NAME => 'Manage bids',
         self::BID_VIEWER_CATEGORY_NAME => 'View bids',
         self::BID_HELPER_CATEGORY_NAME => 'View or edit some bids',
+        self::CUSTOMIZABLE_CATEGORY_NAME => 'Customizable Bids',
     ];
     const PERMISSION_BID_UNIT_NAME = 'bid';
     const PERMISSION_BID_UNIT_HUMAN_NAME = 'Bid';
@@ -72,6 +74,7 @@ class PluginPermissions
                 self::PERMISSION_BID_PER_VIEW ,
                 self::PERMISSION_BID_PER_EDIT
             ],
+        self::CUSTOMIZABLE_CATEGORY_NAME => []
     ];
 
     public static function doInit() {
@@ -99,6 +102,7 @@ class PluginPermissions
 
     /** @return GenericPermission[] */
     public static function  getPermissions(?string $category_name = null,?string $only_permission_name = null) {
+        if ($category_name && !in_array($category_name,array_keys(static::BID_CATEGORIES) )) {return [];}
         if ($category_name) {
             return UserRoleRule::getPermissionsForCategory(category_name: $category_name,for_plugin:ScmPluginBidProvider::PLUGIN_NAME);
         }
@@ -108,6 +112,10 @@ class PluginPermissions
     /** @return GenericCategory[] */
     public static function  getUserCategories(\App\Models\User $user) {
         return UserRole::getUserCategories(user: $user,for_plugin: ScmPluginBidProvider::PLUGIN_NAME);
+    }
+
+    public static function  getAssignableUsers(?GenericPermission $permission = null) {
+        return UserRoleApply::getAssignableUsers(permission: $permission,for_plugin: ScmPluginBidProvider::PLUGIN_NAME);
     }
 
 
@@ -130,6 +138,15 @@ class PluginPermissions
     :void
     {
         UserRoleApply::removeAppliedResource(user: $user,permission_name: $permission_name,per_unit_of: $per_unit_of,per_unit_id: $per_unit_id,b_call_action: false);
+    }
+
+    public static function  updateAppliedPermissions(
+        ?\App\Models\User $user = null,?string $category_name = null,?string $permission_name = null,?string $per_unit_of = null, ?int $per_unit_id = null)
+    :void
+    {
+        UserRoleApply::updateAppliedPermissions(
+            user: $user,category_name: $category_name,permission_name: $permission_name,
+            per_unit_of: $per_unit_of,per_unit_id: $per_unit_id,for_plugin: ScmPluginBidProvider::PLUGIN_NAME,b_call_action: false);
     }
 
 }

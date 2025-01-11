@@ -118,7 +118,7 @@ class PluginLogic extends Plugin {
 
 
 
-         Eventy::addFilter(Plugin::FILTER_ROLE_HUMAN_UNIT_TYPE,
+         Eventy::addFilter(Plugin::FILTER_PERMISSION_HUMAN_UNIT_TYPE,
             function( ?string $human_name, string $machine_unit_type )
             : string
             {
@@ -129,7 +129,7 @@ class PluginLogic extends Plugin {
             }, 20, 2);
 
 
-         Eventy::addFilter(Plugin::FILTER_ROLE_HUMAN_UNIT_ID,
+         Eventy::addFilter(Plugin::FILTER_PERMISSION_HUMAN_UNIT_ID,
             function( ?string $human_name, string $machine_unit_type,int $unit_id )
             : string
             {
@@ -142,7 +142,7 @@ class PluginLogic extends Plugin {
                },
             20, 3);
 
-         Eventy::addFilter(Plugin::FILTER_ROLE_PERMISSION_MODEL,
+         Eventy::addFilter(Plugin::FILTER_PERMISSION_MODEL,
             function( ?\Illuminate\Database\Eloquent\Model $found, string $machine_unit_type,int $unit_id )
             : string
             {
@@ -187,6 +187,51 @@ class PluginLogic extends Plugin {
             }, 20, 2);
 
 
+        Eventy::addFilter(Plugin::FILTER_ASSIGNABLE_USERS_FOR_RESOURCE_PERMISSION,
+            function( array $permission_users,?\App\Helpers\Roles\GenericPermission $given_permission = null)
+            : array
+            {
+                $our_assignable_users =  PluginPermissions::getAssignableUsers($given_permission);
+                return array_merge($permission_users,$our_assignable_users);
+            }, 20, 2);
+
+
+        Eventy::addFilter(Plugin::FILTER_PERMISSION_TYPE_LIST,
+            function( array  $found_type_list, string $machine_unit_type )
+            : array
+            {
+                if ($machine_unit_type === PluginPermissions::PERMISSION_BID_UNIT_NAME) {
+                    /** @var ScmPluginBidSingle[] $plugin_model_list */
+                   $plugin_model_list = ScmPluginBidSingle::orderBy('bid_name')->get();
+                   foreach ($plugin_model_list as $bid) {
+                       $found_type_list[$bid->id] = $bid->getName();
+                   }
+                   return $found_type_list;
+                }
+                return $found_type_list;
+            }, 20, 2);
+
+
+        Eventy::addFilter(Plugin::FILTER_PERMISSION_UNIT_LINK,
+            function( ?string $link, string $machine_unit_type,int $unit_id )
+            : string
+            {
+                if ($machine_unit_type === PluginPermissions::PERMISSION_BID_UNIT_NAME) {
+                   return route('scm-bid.admin.bids.show',['bid_id'=>$unit_id]);
+                }
+                return $link;
+            }, 20, 3);
+
+
+        Eventy::addAction(Plugin::ACTION_UPDATE_APPLIED_PERMISSIONS,
+            function( ?\App\Models\User $user = null,?string $category_name = null,?string $permission_name = null,
+                   ?string $per_unit_of = null, ?int $per_unit_id = null )
+            : void
+            {
+                PluginPermissions::updateAppliedPermissions(
+                    user: $user,category_name: $category_name,permission_name: $permission_name,
+                    per_unit_of: $per_unit_of,per_unit_id: $per_unit_id);
+            }, 20, 5);
 
     }
 
