@@ -123,7 +123,7 @@ class PluginPermissions
      * @throws \Exception
      */
     public static function  saveRoles(array $category_names, \App\Models\User $user) :void {
-        $user->save_roles(category_names: $category_names,by_user: Utilities::get_logged_user(),for_plugin: ScmPluginBidProvider::PLUGIN_NAME);
+        $user->save_roles(category_names: $category_names,by_user: Utilities::get_logged_user(b_throw_on_unlogged: false),for_plugin: ScmPluginBidProvider::PLUGIN_NAME);
     }
 
     public static function  addPermissionToCategory(string $category_name,string $permission_name) :void {
