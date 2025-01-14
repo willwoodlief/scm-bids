@@ -8,7 +8,7 @@
 
 <div class="container-fluid">
     <form method="POST" enctype="multipart/form-data"
-          action="{{$bid->id? route('scm-bid.admin.bids.update',['bid_id'=>$bid->id]) : route('scm-bid.admin.bids.create')}}"
+          action="{{$bid->id? route('scm-bid.bid.update',['single_bid'=>$bid->id]) : route('scm-bid.create')}}"
     >
         @csrf
         @if($bid->id)

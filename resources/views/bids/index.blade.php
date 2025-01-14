@@ -1,4 +1,9 @@
 
+@php
+    /**
+     * @var \Scm\PluginBid\Models\ScmPluginBidSingle[] $bids
+     */
+@endphp
 
 @component('layouts.app')
 
@@ -23,29 +28,27 @@
                             Home
                         </a>
                     </li>
-                    <li class="breadcrumb-item "><a href="{{route('admin')}}">Admin</a></li>
+
 
                     <li class="breadcrumb-item active">
-                        <a href="{{route('scm-bid.admin.index')}}">
-                            Bid Administration
+                        <a href="{{route('scm-bid.index')}}">
+                            Bids
                         </a>
                     </li>
                 </ol>
+                <a class="btn btn-outline-secondary float-end" href="{{route('scm-bid.list')}}">
+                    Bid List
+                </a>
             </div>
 
-            <ul class="list-group">
-                <li class="list-group-item">
-                    <a href="{{route('scm-bid.admin.bids.list')}}">
-                        Bid List
-                    </a>
-                </li>
+            @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/index/small-bid-list',[
+                      'bids'=>$bids
+                   ])
 
-                <li class="list-group-item">
-                    <a href="{{route('scm-bid.admin.bids.new')}}">
-                        New Bid
-                    </a>
-                </li>
-            </ul>
+            @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/index/charts',[
+                      'stats'=>$stats
+                   ])
+
 
 
         </div> <!-- container container-xl -->

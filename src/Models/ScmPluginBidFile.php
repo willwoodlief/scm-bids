@@ -247,6 +247,31 @@ class ScmPluginBidFile extends Model
         return $project_file;
     }
 
+    public function resolveRouteBinding($value, $field = null)
+    {
+        $ret = null;
+        try {
+            if ($field) {
+                $ret = $this->where($field, $value)->first();
+            } else {
+                if (ctype_digit($value)) {
+                    $ret = $this->where('id', $value)->first();
+                }
+            }
+            if ($ret) {
+                $ret = static::getBuilderForBidFile(me_id: $ret->id)->first();
+            }
+        } finally {
+            if (empty($ret)) {
+                if (request()->ajax()) {
+                    throw new ScmPluginBidException("Could not find bid file from $field $value");
+                } else {
+                    abort(404,"Could not find bid file from $field $value");
+                }
+            }
+        }
+        return $ret;
+    }
 
 
 }

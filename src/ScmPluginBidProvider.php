@@ -2,6 +2,9 @@
 namespace Scm\PluginBid;
 
 
+use Illuminate\Support\Facades\Route;
+use Scm\PluginBid\Models\ScmPluginBidFile;
+use Scm\PluginBid\Models\ScmPluginBidSingle;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -51,6 +54,8 @@ class ScmPluginBidProvider extends PackageServiceProvider
     public function packageBooted()
     {
 
+        Route::model('single_bid', ScmPluginBidSingle::class);
+        Route::model('bid_file', ScmPluginBidFile::class);
         $this->plugin_logic = new PluginLogic();
         $this->plugin_logic->initialize();
 

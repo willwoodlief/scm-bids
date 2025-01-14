@@ -28,16 +28,21 @@
                             Home
                         </a>
                     </li>
-                    <li class="breadcrumb-item "><a href="{{route('admin')}}">Admin</a></li>
 
                     <li class="breadcrumb-item">
-                        <a href="{{route('scm-bid.admin.index')}}">
-                            Bid Administration
+                        <a href="{{route('scm-bid.index')}}">
+                            Bids
+                        </a>
+                    </li>
+
+                    <li class="breadcrumb-item ">
+                        <a href="{{route('scm-bid.list')}}">
+                            Bid List
                         </a>
                     </li>
 
                     <li class="breadcrumb-item active">
-                        <a href="{{route('scm-bid.admin.bids.new')}}">
+                        <a href="{{route('scm-bid.new')}}">
                             New Bid
                         </a>
                     </li>

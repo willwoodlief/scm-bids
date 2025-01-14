@@ -27,22 +27,27 @@
                             Home
                         </a>
                     </li>
-                    <li class="breadcrumb-item "><a href="{{route('admin')}}">Admin</a></li>
 
                     <li class="breadcrumb-item">
-                        <a href="{{route('scm-bid.admin.index')}}">
-                            Bid Administration
+                        <a href="{{route('scm-bid.index')}}">
+                            Bids
+                        </a>
+                    </li>
+
+                    <li class="breadcrumb-item ">
+                        <a href="{{route('scm-bid.list')}}">
+                            Bid List
                         </a>
                     </li>
 
                     <li class="breadcrumb-item active">
-                        <a href="{{route('scm-bid.admin.bids.show',['bid_id'=>$bid->id])}}">
+                        <a href="{{route('scm-bid.bid.show',['single_bid'=>$bid->id])}}">
                             Show Bid {{$bid->getName()}}
                         </a>
                     </li>
                 </ol>
 
-                <a href="{{route('scm-bid.admin.bids.edit',['bid_id'=>$bid->id])}}" class="btn btn-secondary float-end">
+                <a href="{{route('scm-bid.bid.edit',['single_bid'=>$bid->id])}}" class="btn btn-secondary float-end">
                     Edit {{$bid->getName()}}
                 </a>
             </div>
@@ -55,7 +60,7 @@
 
                     <button type="button" class="btn btn-outline-success scm-plugin-bid-success-action "
                             data-bid_name="{{str_replace('"','&quot;',$bid->getName())}}"
-                            data-url="{{route('scm-bid.admin.bids.successful',['bid_id'=>$bid->id])}}"
+                            data-url="{{route('scm-bid.bid.success',['single_bid'=>$bid->id])}}"
                             data-method="post"
                             title="Make into a project {{str_replace('"','&quot;',$bid->getName())}}"
                     >
@@ -65,7 +70,7 @@
 
                     <button type="button" class="btn  btn-outline-danger scm-plugin-bid-fail-action "
                             data-bid_name="{{str_replace('"','&quot;',$bid->getName())}}"
-                            data-url="{{route('scm-bid.admin.bids.failed',['bid_id'=>$bid->id])}}"
+                            data-url="{{route('scm-bid.bid.fail',['single_bid'=>$bid->id])}}"
                             data-method="delete"
                             title="Remove bid as unsuccessful: {{str_replace('"','&quot;',$bid->getName())}}"
                     >

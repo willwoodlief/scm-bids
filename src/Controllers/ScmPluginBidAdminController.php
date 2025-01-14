@@ -14,6 +14,7 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Scm\PluginBid\Exceptions\ScmPluginBidException;
+use Scm\PluginBid\Helpers\PluginPermissions;
 use Scm\PluginBid\Models\ScmPluginBidFile;
 use Scm\PluginBid\Requests\BidSaveRequest;
 
@@ -33,18 +34,24 @@ class ScmPluginBidAdminController extends BaseController
 
     public function index()
     {
-        return view(ScmPluginBid::getBladeRoot().'::admin/index',[]);
+        $bids = ScmPluginBidSingle::getBuilderForBid(only_bid_ids: PluginPermissions::getBidIdsUserCanView(Utilities::get_logged_user()))
+            ->orderBy('created_at','desc')->get();
+
+        $stats = ScmPluginBidStat::getBuilderForBidStat(only_bid_ids: PluginPermissions::getBidIdsUserCanView(Utilities::get_logged_user()))
+            ->orderBy('bid_created_at','desc')->get();
+        return view(ScmPluginBid::getBladeRoot().'::bids.index',['bids'=>$bids,'stats'=>$stats]);
     }
 
     public function bid_list()
     {
-        $bids = ScmPluginBidSingle::getBuilderForBid()->orderBy('created_at','desc')->get();
-        return view(ScmPluginBid::getBladeRoot().'::admin/bid-list',['bids'=>$bids]);
+        $bids = ScmPluginBidSingle::getBuilderForBid(only_bid_ids: PluginPermissions::getBidIdsUserCanView(Utilities::get_logged_user()))
+            ->orderBy('created_at','desc')->get();
+        return view(ScmPluginBid::getBladeRoot().'::bids.bid-list',['bids'=>$bids]);
     }
 
     public function new_bid() {
         $stub = new ScmPluginBidSingle();
-        $contractors = Contractor::getAllContractors();
+        $contractors = Contractor::getAllContractors(Utilities::get_logged_user()->getContractorIdsCanSee());
         return view(ScmPluginBid::getBladeRoot().'::bids/new-bid',['bid'=>$stub,'contractors'=> $contractors]);
     }
 
@@ -68,7 +75,7 @@ class ScmPluginBidAdminController extends BaseController
             if ($request->ajax()) {
                 return response()->json(['success' => true, 'bid' => $refreshed_bid,'stat'=> $stat]);
             } else {
-                return redirect()->route('scm-bid.admin.bids.edit',['bid_id'=>$refreshed_bid->id]);
+                return redirect()->route('scm-bid.bid.edit',['single_bid'=>$refreshed_bid->id]);
             }
         } catch (\Exception $e) {
             DB::rollback();
@@ -77,23 +84,16 @@ class ScmPluginBidAdminController extends BaseController
 
     }
 
-    public function edit_bid(int $bid_id) {
-        try {
-            $bid = ScmPluginBidSingle::getBid(me_id: $bid_id);
-        } catch (ScmPluginBidException $e) {
-            abort(404,$e->getMessage());
-        }
-
-        $contractors = Contractor::getAllContractors();
+    public function edit_bid(ScmPluginBidSingle $bid) {
+        $contractors = Contractor::getAllContractors(Utilities::get_logged_user()->getContractorIdsCanSee());
         return view(ScmPluginBid::getBladeRoot().'::bids/edit-bid',['bid'=>$bid,'contractors'=> $contractors]);
     }
 
     /**
      * @throws \Exception
      */
-    public function add_files(int $bid_id, Request $request) {
+    public function add_files(ScmPluginBidSingle $bid, Request $request) {
         $paths = [];
-        $bid = ScmPluginBidSingle::getBid(me_id: $bid_id);
         try {
             DB::beginTransaction();
             foreach ($request->allFiles() as $file) {
@@ -110,25 +110,23 @@ class ScmPluginBidAdminController extends BaseController
 
     }
 
-    public function remove_file(int $bid_id,int $file_id,Request $request) {
-        /** @var ScmPluginBidFile $bid_file */
-        $bid_file = ScmPluginBidFile::getBuilderForBidFile(me_id: $file_id,bid_id: $bid_id)->first();
-        if (!$bid_file) {
-            throw new ScmPluginBidException("Bid file not found for id#$file_id that belongs to bid #$bid_id");
+    public function remove_file(ScmPluginBidSingle $bid,ScmPluginBidFile $bid_file,Request $request) {
+
+        if ($bid_file->owning_bid_id !== $bid->id) {
+            throw new ScmPluginBidException("Bid file not found for id#$bid_file->id that belongs to bid #$bid->id");
         }
         $bid_file->delete();
         if ($request->ajax()) {
             return response()->json(['success' => true, 'file' => $bid_file]);
         } else {
-            return redirect()->route('scm-bid.admin.bids.edit',['bid_id'=>$bid_file->file_bid->id]);
+            return redirect()->route('scm-bid.bid.edit',['single_bid'=>$bid_file->file_bid->id]);
         }
     }
 
-    public function download_file(int $bid_id,int $file_id) {
-        /** @var ScmPluginBidFile $bid_file */
-        $bid_file = ScmPluginBidFile::getBuilderForBidFile(me_id: $file_id,bid_id: $bid_id)->first();
-        if (!$bid_file) {
-            throw new ScmPluginBidException("Bid file not found for id#$file_id that belongs to bid #$bid_id");
+    public function download_file(ScmPluginBidSingle $bid,ScmPluginBidFile $bid_file) {
+
+        if ($bid_file->owning_bid_id !== $bid->id) {
+            throw new ScmPluginBidException("Bid file not found for id#$bid_file->id that belongs to bid #$bid->id");
         }
         $path = $bid_file->getAbsolutePath();
         if (!$path) {
@@ -139,8 +137,7 @@ class ScmPluginBidAdminController extends BaseController
     /**
      * @throws \Exception
      */
-    public function update_bid(int $bid_id, BidSaveRequest $request) {
-        $bid = ScmPluginBidSingle::getBid(me_id: $bid_id);
+    public function update_bid(ScmPluginBidSingle $bid, BidSaveRequest $request) {
 
         try {
             DB::beginTransaction();
@@ -155,7 +152,7 @@ class ScmPluginBidAdminController extends BaseController
             if ($request->ajax()) {
                 return response()->json(['success' => true, 'bid' => $refreshed_bid]);
             } else {
-                return redirect()->route('scm-bid.admin.bids.show',['bid_id'=>$refreshed_bid->id]);
+                return redirect()->route('scm-bid.bid.show',['single_bid'=>$refreshed_bid->id]);
             }
         } catch (\Exception $e) {
             DB::rollback();
@@ -163,20 +160,15 @@ class ScmPluginBidAdminController extends BaseController
         }
     }
 
-    public function show_bid(int $bid_id) {
-        try {
-            $bid = ScmPluginBidSingle::getBid(me_id: $bid_id);
-        } catch (ScmPluginBidException $e) {
-            abort(404,$e->getMessage());
-        }
+    public function show_bid(ScmPluginBidSingle $bid) {
         return view(ScmPluginBid::getBladeRoot().'::bids/show-bid',['bid'=>$bid]);
     }
 
     /**
      * @throws \Exception
      */
-    public function bid_successful(int $bid_id,Request $request) {
-        $bid = ScmPluginBidSingle::getBid(me_id: $bid_id);
+    public function bid_successful(ScmPluginBidSingle $bid,Request $request) {
+
         //create project, delete bid, update stats, redirect to project edit page
 
         /** @var ScmPluginBidFile[] $old_bid_files */
@@ -230,8 +222,8 @@ class ScmPluginBidAdminController extends BaseController
     /**
      * @throws \Exception
      */
-    public function bid_failed(int $bid_id,Request $request) {
-        $bid = ScmPluginBidSingle::getBid(me_id: $bid_id);
+    public function bid_failed(ScmPluginBidSingle $bid,Request $request) {
+
         try {
             DB::beginTransaction();
 
@@ -240,9 +232,9 @@ class ScmPluginBidAdminController extends BaseController
 
             DB::commit();
             if ($request->ajax()) {
-                return response()->json(['success' => true, 'bid' => $bid,'stat'=> $stat,'bid_list_url'=>route('scm-bid.admin.bids.list')]);
+                return response()->json(['success' => true, 'bid' => $bid,'stat'=> $stat,'bid_list_url'=>route('scm-bid.list')]);
             } else {
-                return redirect()->route('scm-bid.admin.bids.list',['bid_id'=>$bid->id]);
+                return redirect()->route('scm-bid.list',['bid_id'=>$bid->id]);
             }
         } catch (\Exception $e) {
             DB::rollback();

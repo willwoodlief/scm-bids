@@ -11,11 +11,11 @@ class BidSaveRequest extends FormRequest
     protected function getRedirectUrl()
     {
         $called_route = Route::currentRouteName();
-        if ($called_route === 'scm-bid.admin.bids.create') {
-            $this->redirect = route('scm-bid.admin.bids.new');
-        } elseif ($called_route === 'scm-bid.admin.bids.edit') {
+        if ($called_route === 'scm-bid.create') {
+            $this->redirect = route('scm-bid.new');
+        } elseif ($called_route === 'scm-bid.bid.edit') {
             $url = $this->redirector->getUrlGenerator();
-            return $url->route('scm-bid.admin.bids.update',['bid_id'=>$this->route('bid_id')]);
+            return $url->route('scm-bid.bid.update',['single_bid'=>$this->route('bid_id')]);
         }
         return parent::getRedirectUrl();
     }

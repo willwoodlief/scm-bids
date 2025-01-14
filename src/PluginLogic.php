@@ -35,12 +35,6 @@ class PluginLogic extends Plugin {
     public function initialize()
     {
 
-        Eventy::addFilter(Plugin::FILTER_FRAME_ADMIN_LINKS, function( string $extra_admin_menu_stuff) {
-            $item =view(ScmPluginBid::getBladeRoot().'::hooks/admin/entry-for-this',[])->render();
-            return $extra_admin_menu_stuff."\n". $item;
-        });
-
-
 
         Eventy::addFilter(Plugin::FILTER_FRAME_EXTRA_HEAD, function( string $stuff) {
             $link = ScmPluginBid::getPluginRef()->getResourceUrl('css/scm-plugin-bid.css');
@@ -217,7 +211,7 @@ class PluginLogic extends Plugin {
             : string
             {
                 if ($machine_unit_type === PluginPermissions::PERMISSION_BID_UNIT_NAME) {
-                   return route('scm-bid.admin.bids.show',['bid_id'=>$unit_id]);
+                   return route('scm-bid.bid.show',['single_bid'=>$unit_id]);
                 }
                 return $link;
             }, 20, 3);

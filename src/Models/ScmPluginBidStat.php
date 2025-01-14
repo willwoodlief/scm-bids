@@ -57,7 +57,8 @@ class ScmPluginBidStat extends Model
 
 
     public static function getBuilderForBidStat(
-        ?int $me_id = null,  ?int $project_id = null,?int $bid_id = null
+        ?int $me_id = null,  ?int $project_id = null,?int $bid_id = null,
+        array $only_bid_ids = []
     )
     : Builder
     {
@@ -90,6 +91,10 @@ class ScmPluginBidStat extends Model
 
         if ($bid_id) {
             $build->where('scm_plugin_bid_stats.stats_bid_id',$bid_id);
+        }
+
+        if (count($only_bid_ids)) {
+            $build->whereIn('scm_plugin_bid_stats.stats_bid_id',$only_bid_ids);
         }
 
 

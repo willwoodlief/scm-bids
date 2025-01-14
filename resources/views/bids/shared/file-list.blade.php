@@ -22,7 +22,7 @@
     @foreach($bid->bid_files as $file)
         <tr >
             <td data-order="{{$file->bid_file_human_name}}" data-sort="{{$file->bid_file_human_name}}" >
-                <a href="{{route('scm-bid.admin.bids.download_file',['bid_id'=>$bid->id,'file_id'=>$file->id])}}" style="white-space: normal">
+                <a href="{{route('scm-bid.files.download',['single_bid'=>$bid->id,'bid_file'=>$file->id])}}" style="white-space: normal">
                     <i class="bi bi-file-arrow-down"></i>
                     {{$file->bid_file_human_name}}
                 </a>
@@ -51,7 +51,7 @@
             @if($b_edit)
             <td>
                 <button type="button" class="btn btn-sm btn-outline-danger scm-plugin-bid-remove-file-action"
-                        data-url="{{route('scm-bid.admin.bids.remove_file',['bid_id'=>$bid->id,'file_id'=>$file->id])}}"
+                        data-url="{{route('scm-bid.files.remove',['single_bid'=>$bid->id,'bid_file'=>$file->id])}}"
                         data-method="delete"
                         data-file_name="{{$file->bid_file_human_name}}"
                 >

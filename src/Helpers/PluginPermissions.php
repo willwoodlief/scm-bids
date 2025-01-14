@@ -4,6 +4,7 @@ namespace Scm\PluginBid\Helpers;
 use App\Helpers\Roles\GenericCategory;
 use App\Helpers\Roles\GenericPermission;
 use App\Helpers\Utilities;
+use App\Models\User;
 use App\Models\UserRole;
 use App\Models\UserRoleApply;
 use App\Models\UserRoleCategory;
@@ -29,11 +30,9 @@ class PluginPermissions
     const PERMISSION_BID_UNIT_HUMAN_NAME = 'Bid';
 
     const PERMISSION_BID_CREATE = 'bid_create';
-    const PERMISSION_BID_ASSIGN = 'bid_assign';
     const PERMISSION_BID_EDIT = 'bid_edit';
-    const PERMISSION_BID_FAIL = 'bid_fail';
-    const PERMISSION_BID_PROMOTE = 'bid_promote';
-    const PERMISSION_BID_VIEW = 'bid_view';
+    const PERMISSION_BID_RESOLVE = 'bid_resolve';
+    const PERMISSION_VIEW_ALL_BIDS = 'bids_view_all';
     const PERMISSION_BID_PER_VIEW = 'bid_per_view';
     const PERMISSION_BID_PER_EDIT = 'bid_per_edit';
 
@@ -42,11 +41,9 @@ class PluginPermissions
     const BID_PERMISSIONS = [
 
         self::PERMISSION_BID_CREATE => ['human_name'=>'Create bids','permission_level'=>6],
-        self::PERMISSION_BID_ASSIGN => ['human_name'=>'Allow user to view and/or edit a bid','permission_level'=>6],
         self::PERMISSION_BID_EDIT => ['human_name'=>'Edit bids','permission_level'=>5],
-        self::PERMISSION_BID_FAIL => ['human_name'=>'Fail bids and delete them','permission_level'=>5],
-        self::PERMISSION_BID_PROMOTE => ['human_name'=>'Promote bids to projects','permission_level'=>5],
-        self::PERMISSION_BID_VIEW => ['human_name'=>'View bids','permission_level'=>5],
+        self::PERMISSION_BID_RESOLVE => ['human_name'=>'Fail or promote bids :  delete them','permission_level'=>5],
+        self::PERMISSION_VIEW_ALL_BIDS => ['human_name'=>'View bids','permission_level'=>5],
         self::PERMISSION_BID_PER_VIEW => ['human_name'=>'View a bid','per_unit_of'=>self::PERMISSION_BID_UNIT_NAME,'permission_level'=>5],
         self::PERMISSION_BID_PER_EDIT => ['human_name'=>'Edit a bid','per_unit_of'=>self::PERMISSION_BID_UNIT_NAME,'permission_level'=>5],
     ];
@@ -57,16 +54,14 @@ class PluginPermissions
         self::BID_EDITOR_CATEGORY_NAME =>
             [
                 self::PERMISSION_BID_CREATE ,
-                self::PERMISSION_BID_ASSIGN ,
                 self::PERMISSION_BID_EDIT ,
-                self::PERMISSION_BID_FAIL ,
-                self::PERMISSION_BID_PROMOTE ,
-                self::PERMISSION_BID_VIEW
+                self::PERMISSION_BID_RESOLVE ,
+                self::PERMISSION_VIEW_ALL_BIDS
 
             ],
         self::BID_VIEWER_CATEGORY_NAME =>
             [
-                self::PERMISSION_BID_VIEW
+                self::PERMISSION_VIEW_ALL_BIDS
             ],
 
         self::BID_HELPER_CATEGORY_NAME =>
@@ -148,5 +143,30 @@ class PluginPermissions
             user: $user,category_name: $category_name,permission_name: $permission_name,
             per_unit_of: $per_unit_of,per_unit_id: $per_unit_id,for_plugin: ScmPluginBidProvider::PLUGIN_NAME,b_call_action: false);
     }
+
+
+
+    /**
+     * empty array means can see all
+     * if cannot set any will have -1 by itself in the array
+     * otherwise will have array of employee ids can see
+     * @return int[]
+     */
+    public static function getBidIdsUserCanView(User $user) : array {
+        if ($user->has_permission(permission_names: static::PERMISSION_VIEW_ALL_BIDS) ) {
+            return []; //can see all
+        }
+        $ret = [];
+        //get the per view applied rules and build list
+        $applied_list = \App\Models\UserRole::getAssignmentsToResources(user: $user,permission_names: [static::PERMISSION_BID_PER_VIEW]);
+        foreach ($applied_list as $perm) {
+            if ($perm->getPerUnitOf() !== static::PERMISSION_BID_UNIT_NAME) {continue;}
+            $ret[] = $perm->getUnitId();
+        }
+        if (count($ret)) {return $ret;}
+        //if empty list
+        return [UserRolePermission::NO_ID_AVAILABLE]; //will not match any employee
+    }
+
 
 }

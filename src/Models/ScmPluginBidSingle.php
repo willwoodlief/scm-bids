@@ -124,7 +124,7 @@ class ScmPluginBidSingle extends Model
     }
 
     public static function getBuilderForBid(
-        ?int $me_id = null,  ?int $contractor_id = null
+        ?int $me_id = null,  ?int $contractor_id = null,array $only_bid_ids = []
     )
     : Builder
     {
@@ -145,6 +145,10 @@ class ScmPluginBidSingle extends Model
 
         if ($me_id) {
             $build->where('scm_plugin_bid_singles.id',$me_id);
+        }
+
+        if (count($only_bid_ids)) {
+            $build->whereIn('scm_plugin_bid_singles.id',$only_bid_ids);
         }
 
         if ($contractor_id) {
@@ -229,5 +233,30 @@ class ScmPluginBidSingle extends Model
         return $ret;
     }
 
+    public function resolveRouteBinding($value, $field = null)
+    {
+        $ret = null;
+        try {
+            if ($field) {
+                $ret = $this->where($field, $value)->first();
+            } else {
+                if (ctype_digit($value)) {
+                    $ret = $this->where('id', $value)->first();
+                }
+            }
+            if ($ret) {
+                $ret = static::getBuilderForBid(me_id: $ret->id)->first();
+            }
+        } finally {
+            if (empty($ret)) {
+                if (request()->ajax()) {
+                    throw new ScmPluginBidException("Could not find bid from $field $value");
+                } else {
+                    abort(404,"Could not find bid from $field $value");
+                }
+            }
+        }
+        return $ret;
+    }
 
 }
