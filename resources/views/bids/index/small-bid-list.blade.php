@@ -9,7 +9,7 @@
 <div class="card">
     <div class="card-header">
         <h4 class="card-title">
-            Bids
+            Active bids
         </h4>
         <a class="btn btn-outline-primary float-end" href="{{route('scm-bid.new')}}">
             New Bid
@@ -22,6 +22,7 @@
                 <th>Bid Name</th>
                 <th>Contractor</th>
                 <th>When</th>
+                <th>Budget</th>
             </tr>
             </thead>
             <tbody>
@@ -56,6 +57,9 @@
                         <span class="will-show-long-date-time" style="white-space: normal" data-ts="{{$tz_ts}}"></span>
                     </td>
 
+                    <td data-order="{{$bid->budget}}" data-sort="{{$bid->budget}}">
+                        {{\App\Helpers\Utilities::formatMoney($bid->budget)}}
+                    </td>
                 </tr>
             @endforeach
             </tbody>

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Http\UploadedFile;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -40,6 +41,7 @@ use Scm\PluginBid\Facades\ScmPluginBid;
  * @property int created_at_ts
  * @property int updated_at_ts
 
+ * @property ScmPluginBidStat bid_stat
  * @property Contractor bid_contractor
  * @property User bid_created_by_user
  * @property ScmPluginBidFile[] bid_files
@@ -88,10 +90,34 @@ class ScmPluginBidSingle extends Model
         static::deleted(function (ScmPluginBidSingle $bid) {
             $bid->cleanup_resources();
         });
+
+        static::updated(function (ScmPluginBidSingle $bid) {
+            if ( $bid->bid_stat ) {
+                $b_save = false;
+                if ( $bid->bid_stat->bid_name !== $bid->bid_name) {
+                    $bid->bid_stat->bid_name = $bid->bid_name;
+                    $b_save = true;
+                }
+
+                if ( $bid->bid_stat->budget !== $bid->budget) {
+                    $bid->bid_stat->budget = $bid->budget;
+                    $b_save = true;
+                }
+
+                if ($b_save) {
+                    $bid->bid_stat->save();
+                }
+            }
+
+        });
     }
 
     public function bid_contractor() : BelongsTo {
         return $this->belongsTo(Contractor::class,'bid_contractor_id');
+    }
+
+    public function bid_stat() : HasOne {
+        return $this->hasOne(ScmPluginBidStat::class,'stats_bid_id','id');
     }
 
     public function bid_created_by_user() : BelongsTo {
@@ -141,6 +167,9 @@ class ScmPluginBidSingle extends Model
 
             /** @uses static::bid_files() */
             ->with('bid_files')
+
+            /** @uses static::bid_stat() */
+            ->with('bid_stat')
             ;
 
         if ($me_id) {

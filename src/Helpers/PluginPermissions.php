@@ -32,6 +32,7 @@ class PluginPermissions
     const PERMISSION_BID_CREATE = 'bid_create';
     const PERMISSION_BID_EDIT = 'bid_edit';
     const PERMISSION_BID_RESOLVE = 'bid_resolve';
+    const PERMISSION_BID_VIEW_STATS = 'bid_view_stats';
     const PERMISSION_VIEW_ALL_BIDS = 'bids_view_all';
     const PERMISSION_BID_PER_VIEW = 'bid_per_view';
     const PERMISSION_BID_PER_EDIT = 'bid_per_edit';
@@ -43,9 +44,10 @@ class PluginPermissions
         self::PERMISSION_BID_CREATE => ['human_name'=>'Create bids','permission_level'=>6],
         self::PERMISSION_BID_EDIT => ['human_name'=>'Edit bids','permission_level'=>5],
         self::PERMISSION_BID_RESOLVE => ['human_name'=>'Fail or promote bids :  delete them','permission_level'=>5],
-        self::PERMISSION_VIEW_ALL_BIDS => ['human_name'=>'View bids','permission_level'=>5],
-        self::PERMISSION_BID_PER_VIEW => ['human_name'=>'View a bid','per_unit_of'=>self::PERMISSION_BID_UNIT_NAME,'permission_level'=>5],
-        self::PERMISSION_BID_PER_EDIT => ['human_name'=>'Edit a bid','per_unit_of'=>self::PERMISSION_BID_UNIT_NAME,'permission_level'=>5],
+        self::PERMISSION_VIEW_ALL_BIDS => ['human_name'=>'View bids','permission_level'=>4],
+        self::PERMISSION_BID_VIEW_STATS => ['human_name'=>'View stats and history','permission_level'=>4],
+        self::PERMISSION_BID_PER_VIEW => ['human_name'=>'View a bid','per_unit_of'=>self::PERMISSION_BID_UNIT_NAME,'permission_level'=>3],
+        self::PERMISSION_BID_PER_EDIT => ['human_name'=>'Edit a bid','per_unit_of'=>self::PERMISSION_BID_UNIT_NAME,'permission_level'=>4],
     ];
 
 
@@ -56,12 +58,14 @@ class PluginPermissions
                 self::PERMISSION_BID_CREATE ,
                 self::PERMISSION_BID_EDIT ,
                 self::PERMISSION_BID_RESOLVE ,
-                self::PERMISSION_VIEW_ALL_BIDS
+                self::PERMISSION_VIEW_ALL_BIDS,
+                self::PERMISSION_BID_VIEW_STATS
 
             ],
         self::BID_VIEWER_CATEGORY_NAME =>
             [
-                self::PERMISSION_VIEW_ALL_BIDS
+                self::PERMISSION_VIEW_ALL_BIDS,
+                self::PERMISSION_BID_VIEW_STATS
             ],
 
         self::BID_HELPER_CATEGORY_NAME =>
@@ -77,6 +81,13 @@ class PluginPermissions
         UserRolePermission::initOrRefreshPermissions(permission_array: static::BID_PERMISSIONS,for_plugin: ScmPluginBidProvider::PLUGIN_NAME);
         UserRoleRule::setupRules(setup: static::BID_PERMISSION_RULES,for_plugin: ScmPluginBidProvider::PLUGIN_NAME);
         UserRoleApply::updateAppliedPermissions(for_plugin: ScmPluginBidProvider::PLUGIN_NAME);
+
+        //assign role to all admins
+        UserRole::getUsersOfCategory(category_name: UserRoleCategory::USER_CATEGORY_ADMIN)->each(/**
+         * @throws \Exception
+         */ function (User $user) {
+            $user->addRole(category_name: static::BID_EDITOR_CATEGORY_NAME, by_user: null);
+        });
     }
 
     public static function doRemove() {

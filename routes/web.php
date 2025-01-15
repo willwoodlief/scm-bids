@@ -10,6 +10,7 @@ use Scm\PluginBid\Middleware\CanCreateBid;
 use Scm\PluginBid\Middleware\CanEditBid;
 use Scm\PluginBid\Middleware\CanResolveBid;
 use Scm\PluginBid\Middleware\CanViewBid;
+use Scm\PluginBid\Middleware\CanViewStats;
 use Scm\PluginBid\Middleware\HasBidPermissions;
 
 
@@ -21,11 +22,17 @@ Route::prefix('scm-bid')->group(function () {
 
         Route::get('/', [ScmPluginBidAdminController::class, 'index'])->name('scm-bid.index');
         Route::get('list', [ScmPluginBidAdminController::class, 'bid_list'])->name('scm-bid.list');
+        Route::get('get_new_contactor_form', [ScmPluginBidAdminController::class, 'get_new_contactor_form'])->name('scm-bid.get_new_contactor_form');
+        Route::post('create_contractor', [ScmPluginBidAdminController::class, 'create_contractor'])->name('scm-bid.create_contractor');
 
         Route::middleware([CanCreateBid::class])->group(function () {
             Route::get('new', [ScmPluginBidAdminController::class, 'new_bid'])->name('scm-bid.new');
             Route::post('create', [ScmPluginBidAdminController::class, 'create_bid'])->name('scm-bid.create');
         }); //end create bid
+
+        Route::middleware([CanViewStats::class])->group(function () {
+            Route::get('show_processed', [ScmPluginBidAdminController::class, 'show_processed'])->name('scm-bid.show_processed');
+        }); //end stats
 
 
 

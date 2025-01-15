@@ -4,6 +4,8 @@ namespace Scm\PluginBid\Controllers;
 
 
 use App\Helpers\Utilities;
+use App\Http\Controllers\ContractorsController;
+use App\Http\Requests\ContractorSaveRequest;
 use App\Models\Contractor;
 
 use App\Models\Project;
@@ -15,6 +17,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Scm\PluginBid\Exceptions\ScmPluginBidException;
 use Scm\PluginBid\Helpers\PluginPermissions;
+use Scm\PluginBid\Models\Enums\TypeOfStat;
+use Scm\PluginBid\Models\Enums\UnitOfStat;
 use Scm\PluginBid\Models\ScmPluginBidFile;
 use Scm\PluginBid\Requests\BidSaveRequest;
 
@@ -23,6 +27,7 @@ use Scm\PluginBid\Facades\ScmPluginBid;
 use Scm\PluginBid\Models\ScmPluginBidSingle;
 use Scm\PluginBid\Models\ScmPluginBidStat;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 
 class ScmPluginBidAdminController extends BaseController
@@ -32,14 +37,28 @@ class ScmPluginBidAdminController extends BaseController
 
 
 
-    public function index()
+    public function index(Request $request)
     {
         $bids = ScmPluginBidSingle::getBuilderForBid(only_bid_ids: PluginPermissions::getBidIdsUserCanView(Utilities::get_logged_user()))
             ->orderBy('created_at','desc')->get();
 
         $stats = ScmPluginBidStat::getBuilderForBidStat(only_bid_ids: PluginPermissions::getBidIdsUserCanView(Utilities::get_logged_user()))
             ->orderBy('bid_created_at','desc')->get();
-        return view(ScmPluginBid::getBladeRoot().'::bids.index',['bids'=>$bids,'stats'=>$stats]);
+
+
+        $after_date = $request->query->getString('after_date');
+        $before_date = $request->query->getString('before_date');
+        $unit_type = UnitOfStat::tryFromInput($request->query->getString('unit',UnitOfStat::DAY->value));
+
+
+        $stats_success = ScmPluginBidStat::getUnitsForStats(stat_type: TypeOfStat::SUCCESSFUL,unit_type: $unit_type,after_date: $after_date,before_date: $before_date);
+        $stats_fail = ScmPluginBidStat::getUnitsForStats(stat_type: TypeOfStat::FAILED,unit_type: $unit_type,after_date: $after_date,before_date: $before_date);
+        $stats_active = ScmPluginBidStat::getUnitsForStats(stat_type: TypeOfStat::ACTIVE,unit_type: $unit_type,after_date: $after_date,before_date: $before_date);
+
+
+
+        return view(ScmPluginBid::getBladeRoot().'::bids.index',['bids'=>$bids,'stats'=>$stats,
+            'stats_success'=>$stats_success,'stats_fail'=>$stats_fail,'stats_active'=>$stats_active,'unit_type'=>$unit_type]);
     }
 
     public function bid_list()
@@ -47,6 +66,36 @@ class ScmPluginBidAdminController extends BaseController
         $bids = ScmPluginBidSingle::getBuilderForBid(only_bid_ids: PluginPermissions::getBidIdsUserCanView(Utilities::get_logged_user()))
             ->orderBy('created_at','desc')->get();
         return view(ScmPluginBid::getBladeRoot().'::bids.bid-list',['bids'=>$bids]);
+    }
+
+
+    public function get_new_contactor_form()
+    {
+        if (!Utilities::get_logged_user()->canCreateContractor()) {
+            abort(Response::HTTP_FORBIDDEN,'No Permission');
+        }
+        $contractor = new Contractor();
+        $html = view('contractors.parts.contractor_form',compact('contractor'))->render();
+        $wrapped_html = view(ScmPluginBid::getBladeRoot().'::bids.shared.wrapped-contractor-form',['html'=>$html])->render();
+        return response()->json(['success'=>true,'message'=>"Made contractor form ",'html'=>$wrapped_html]);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function create_contractor(ContractorsController $con,ContractorSaveRequest $request) {
+        try {
+            DB::beginTransaction();
+            $inner_ret = $con->create_contractor($request);
+            $data = $inner_ret->getData(assoc: true);
+            /** @var Contractor $new_contractor */
+            $data['contractor_id'] = $data['contractor']['id']??null;
+            DB::commit();
+            return response()->json($data);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
     public function new_bid() {
@@ -88,6 +137,14 @@ class ScmPluginBidAdminController extends BaseController
         $contractors = Contractor::getAllContractors(Utilities::get_logged_user()->getContractorIdsCanSee());
         return view(ScmPluginBid::getBladeRoot().'::bids/edit-bid',['bid'=>$bid,'contractors'=> $contractors]);
     }
+
+    public function show_processed() {
+        $resolved = ScmPluginBidStat::getBuilderForBidStat(b_only_resolved: true)
+            ->orderBy('bid_success_at')->orderBy('bid_failed_at')->get();
+        return view(ScmPluginBid::getBladeRoot().'::bids/processed',['resolved'=>$resolved]);
+    }
+
+
 
     /**
      * @throws \Exception

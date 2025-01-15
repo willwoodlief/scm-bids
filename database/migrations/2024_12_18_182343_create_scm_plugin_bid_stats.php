@@ -77,6 +77,8 @@ return new class extends Migration
                 ->index()
                 ->comment("Amount of the bid, saved because the bid itself is deleted on success or fail");
 
+            $table->string('bid_name',255)->nullable(true)->default(null);
+
         });
     }
 

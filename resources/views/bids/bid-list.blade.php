@@ -48,6 +48,9 @@
                     <h4 class="card-title">
                         List of pending bids
                     </h4>
+                    <a class="btn btn-outline-primary float-end" href="{{route('scm-bid.new')}}">
+                        New Bid
+                    </a>
                 </div>
                 <div class="card-body">
                     <table  class="table" data-order='[[ 3, "desc" ]]' id="scm-plugin-bid-list">

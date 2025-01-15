@@ -59,7 +59,7 @@ jQuery(function($) {
             showCancelButton: true,
         }).then((result) => {
             if (result.isConfirmed) {
-                debugger;
+
                 let url = this.dataset.url;
                 let method = this.dataset.method;
                 scm_do_ajax(url,method,{},
