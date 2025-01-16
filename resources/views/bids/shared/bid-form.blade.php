@@ -97,4 +97,4 @@
     </form>
 </div>
 
-@include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/shared/contractor-dialog');
+@include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/shared/contractor-dialog')

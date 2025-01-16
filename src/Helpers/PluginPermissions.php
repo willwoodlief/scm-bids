@@ -43,7 +43,7 @@ class PluginPermissions
 
         self::PERMISSION_BID_CREATE => ['human_name'=>'Create bids','permission_level'=>6],
         self::PERMISSION_BID_EDIT => ['human_name'=>'Edit bids','permission_level'=>5],
-        self::PERMISSION_BID_RESOLVE => ['human_name'=>'Fail or promote bids :  delete them','permission_level'=>5],
+        self::PERMISSION_BID_RESOLVE => ['human_name'=>'Mark bids as successful or not :  delete them','permission_level'=>5],
         self::PERMISSION_VIEW_ALL_BIDS => ['human_name'=>'View bids','permission_level'=>4],
         self::PERMISSION_BID_VIEW_STATS => ['human_name'=>'View stats and history','permission_level'=>4],
         self::PERMISSION_BID_PER_VIEW => ['human_name'=>'View a bid','per_unit_of'=>self::PERMISSION_BID_UNIT_NAME,'permission_level'=>3],

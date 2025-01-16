@@ -64,7 +64,7 @@
                             data-method="post"
                             title="Make into a project {{str_replace('"','&quot;',$bid->getName())}}"
                     >
-                        Success!
+                        Accepted!
                         <i class="bi bi-play-fill"></i>
                     </button>
 
@@ -72,9 +72,9 @@
                             data-bid_name="{{str_replace('"','&quot;',$bid->getName())}}"
                             data-url="{{route('scm-bid.bid.fail',['single_bid'=>$bid->id])}}"
                             data-method="delete"
-                            title="Remove bid as unsuccessful: {{str_replace('"','&quot;',$bid->getName())}}"
+                            title="Remove bid as not accepted: {{str_replace('"','&quot;',$bid->getName())}}"
                     >
-                        Failed
+                        Not accepted
                         <i class="bi bi-x-octagon-fill"></i>
                     </button>
                 </div>

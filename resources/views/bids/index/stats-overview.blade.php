@@ -19,7 +19,7 @@
             <div class="col-4">
 
                 <div class="alert alert-success text-center">
-                    Successful
+                    Accepted
                     <span class="badge badge-success">
                         {{\Scm\PluginBid\Helpers\OverallStats::getTotalSuccess()}}
                     </span>
@@ -33,7 +33,7 @@
 
             <div class="col-4">
                 <div class="alert alert-danger text-center">
-                    Failed
+                    Not accepted
                     <span class="badge badge-danger">
                         {{\Scm\PluginBid\Helpers\OverallStats::getTotalFailed()}}
                     </span>

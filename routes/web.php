@@ -14,7 +14,7 @@ use Scm\PluginBid\Middleware\CanViewStats;
 use Scm\PluginBid\Middleware\HasBidPermissions;
 
 
-Route::prefix('scm-bid')->group(function () {
+Route::prefix('bids')->group(function () {
 
 
     Route::middleware(['web','auth',HasBidPermissions::class])->group(function () {

@@ -49,13 +49,13 @@
         }
         const data = {
             datasets: [{
-                    label: 'Failed Bids',
+                    label: 'Not Accepted Bids',
                     borderColor: 'rgb(255, 99, 132)',
                     lineTension: 0.4,
                     data: data_fail
                 },
                 {
-                    label: 'Successful Bids',
+                    label: 'Accepted Bids',
                     borderColor: 'rgb(99, 255, 132)',
                     lineTension: 0.4,
                     data: data_success

@@ -243,9 +243,9 @@ class ScmPluginBidAdminController extends BaseController
                 'scratch_pad' => $bid->scratch_pad,
                 'start_date' => DB::raw("Date(NOW())"),
                 'end_date' => DB::raw("Date(DATE_ADD(NOW(), INTERVAL 1 MONTH))"),
-                'super_name' => 'Main Contact',
+                'super_name' => 'Secondary Contact',
                 'super_phone' => '123-555-6789',
-                'pm_name' => 'Secondary Contact',
+                'pm_name' => 'Main Contact',
                 'pm_phone' => '123-555-6789',
                 'status' => Project::STATUS_NOT_STARTED
             ]);

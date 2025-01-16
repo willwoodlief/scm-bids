@@ -5,7 +5,7 @@
 <div class="card">
     <div class="card-header">
         <h4 class="card-title">
-            Bids that were completed or failed
+            Bids that were marked as complete
         </h4>
     </div>
     <div class="card-body">
@@ -39,7 +39,7 @@
                             </span>
                         @elseif ($stat->bid_failed_at)
                             <span class="alert alert-danger">
-                                Failed
+                                Not Accepted
                             </span>
                         @else
                             <span class="alert alert-light">

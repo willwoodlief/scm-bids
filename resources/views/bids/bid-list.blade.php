@@ -124,7 +124,7 @@
                                                 data-bid_name="{{str_replace('"','&quot;',$bid->getName())}}"
                                                 data-url="{{route('scm-bid.bid.fail',['single_bid'=>$bid->id])}}"
                                                 data-method="delete"
-                                                title="Remove bid as unsuccessful: {{str_replace('"','&quot;',$bid->getName())}}"
+                                                title="Remove bid as not accepted: {{str_replace('"','&quot;',$bid->getName())}}"
                                         >
                                             <i class="bi bi-x-octagon-fill"></i>
                                         </button>
