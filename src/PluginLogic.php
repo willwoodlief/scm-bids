@@ -5,6 +5,7 @@ namespace Scm\PluginBid;
 use App\Plugins\Plugin;
 
 use Scm\PluginBid\Helpers\PluginPermissions;
+use Scm\PluginBid\Models\ScmPluginBidFile;
 use Scm\PluginBid\Models\ScmPluginBidSingle;
 use TorMorten\Eventy\Facades\Eventy;
 use Scm\PluginBid\Facades\ScmPluginBid;
@@ -63,6 +64,11 @@ class PluginLogic extends Plugin {
 
         }, 20, 1);
 
+        Eventy::addFilter(Plugin::FILTER_TOTAL_SIZE_FILES, function( int $total_file_size ): int {
+            $my_extra_size = ScmPluginBidFile::sum('bid_file_size_bytes');
+            if (!$my_extra_size) {$my_extra_size = 0;}
+            return $total_file_size + $my_extra_size;
+        }, 20, 2);
 
         /*
            Permissions below
