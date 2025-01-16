@@ -2,6 +2,14 @@
     .new-contractor-tingle .tingle-modal-box {
         width: auto;
     }
+
+    .scm-show-url {
+        width: 5rem !important; height: auto;display: none; text-align: center;
+    }
+
+    .new-contractor-tingle #searchTextField {
+        z-index: revert !important;
+    }
 </style>
 
 
@@ -42,7 +50,47 @@
                  *  @param {string} data.html
                  * */
                 function(data) {
-                    let edit_div = $(data.html);
+                    let body = $("body")
+                    let edit_div = $(`.scm-plugin-bid-save-form`);
+                    if (edit_div.length === 0) {
+                        let save_edit_div = $(`<div class="scm-plugin-bid-save-form container">${data.html}<\div>`);
+                        body.append(save_edit_div);
+                        body.on('submit', '.scm-plugin-bid-save-form form', function (e) {
+
+                            let that = $(this);
+                            let spinner = that.closest('.scm-spinner-area').find(`.scm-spinner`);
+                            spinner.show();
+
+                            e.preventDefault();
+                            var formData = new FormData(this);
+
+
+                            scm_ajax_create_contractor(formData,
+                                /**
+                                 *  @param {object} data
+                                 *  @param {object} data.contractor
+                                 * */
+                                function(data) {
+                                    let select = $(`select[name="bid_contractor_id"]`);
+                                    select.append(`<option selected value="${data.contractor.id}">${data.contractor.name}</option>`);
+                                    spinner.hide();
+                                    modal.close();
+                                },
+                                function(data) {
+                                    spinner.hide();
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Cannot create contractor',
+                                        text: data.message,
+                                    })
+                                }
+                            ) //end ajax call
+                            return false;
+                        })
+                    }
+
+                    edit_div = $(`.scm-plugin-bid-save-form`);
+
 
                     // noinspection JSPotentiallyInvalidConstructorUsage
                     modal = new tingle.modal({
@@ -63,39 +111,7 @@
                     // open modal
                     modal.open();
 
-                    edit_div.on('submit', 'form', function (e) {
 
-                        let that = $(this);
-                        let spinner = that.closest('.scm-spinner-area').find(`.scm-spinner`);
-                        spinner.show();
-
-                        e.preventDefault();
-                        var formData = new FormData(this);
-
-
-                        scm_ajax_create_contractor(formData,
-                            /**
-                             *  @param {object} data
-                             *  @param {object} data.contractor
-                             * */
-                            function(data) {
-                                debugger;
-                                let select = $(`select[name="bid_contractor_id"]`);
-                                select.append(`<option selected value="${data.contractor.id}">${data.contractor.name}</option>`);
-                                spinner.hide();
-                                modal.close();
-                            },
-                            function(data) {
-                                spinner.hide();
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Cannot create contractor',
-                                    text: data.message,
-                                })
-                            }
-                        ) //end ajax call
-                        return false;
-                    })
                 }) //end scm_ajax_get_form
 
         }//end show new resource form
