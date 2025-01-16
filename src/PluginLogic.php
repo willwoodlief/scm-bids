@@ -68,7 +68,7 @@ class PluginLogic extends Plugin {
             $my_extra_size = ScmPluginBidFile::sum('bid_file_size_bytes');
             if (!$my_extra_size) {$my_extra_size = 0;}
             return $total_file_size + $my_extra_size;
-        }, 20, 2);
+        }, 20, 1);
 
         /*
            Permissions below
