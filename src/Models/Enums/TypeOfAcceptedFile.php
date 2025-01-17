@@ -119,10 +119,17 @@ enum TypeOfAcceptedFile : string {
         return false;
     }
 
+    const DEFAULT_TESTING_STATE_FOR_PDF = false;
+
+    public static function isTestingPdf() : bool {
+        return (bool)config('scm-plugin-bid.test_pdf');
+    }
     /**
      * @throws \Exception
      */
     public static function testForPdf(UploadedFile $file) : bool {
+        if (!self::isTestingPdf()) {return true;}
+
         try {
             $parser = new \Smalot\PdfParser\Parser();
             $parser->parseFile($file->path());

@@ -4,9 +4,9 @@
 
 
 return [
-    'name' => 'bid', //stub for later real config here
+    'test_pdf' => env('SCM_PLUGIN_BIDS_CHECK_PDF',\Scm\PluginBid\Models\Enums\TypeOfAcceptedFile::DEFAULT_TESTING_STATE_FOR_PDF),
 ];
 
-//config('scm-plugin-bid.name') //example for accessing
+//config('scm-plugin-bid.test_pdf') //example for accessing
 
 

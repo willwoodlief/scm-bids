@@ -1,3 +1,6 @@
+# version 1.0.3  January 17,2025
+* Add config to check pdf or not, because it takes up memory for large files
+
 # version 1.0.2  January 17,2025
 * Do not fail pdf if only images inside
 
