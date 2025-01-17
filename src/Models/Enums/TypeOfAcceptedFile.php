@@ -125,10 +125,8 @@ enum TypeOfAcceptedFile : string {
     public static function testForPdf(UploadedFile $file) : bool {
         try {
             $parser = new \Smalot\PdfParser\Parser();
-            $pdf = $parser->parseFile($file->path());
-            $text = $pdf->getText();
-            if ($text) {  return true; }
-
+            $parser->parseFile($file->path());
+            return true;
         } catch (\Exception $e) {
             if (!str_contains($e->getMessage(),'Invalid PDF')) {
                 throw $e; //some other issue
