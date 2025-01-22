@@ -15,74 +15,71 @@
 
         <div class="container container-xl mt-0">
 
-            <!-- row -->
-            <div class="page-titles mb-2">
-                <ol class="breadcrumb">
-                    <li>
-                        <h5 class="bc-title">Bids</h5>
-                    </li>
+            <section class="scm-page-header mt-1">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="{{route('dashboard')}}">
+                                Dashboard
+                            </a>
+                        </li>
 
-                    <li class="breadcrumb-item">
-                        <a href="{{route('dashboard')}}">
-                            @include('layouts.common.home-svg')
-                            Home
-                        </a>
-                    </li>
+                        <li class="breadcrumb-item" >
+                            <a href="{{route('admin')}}">
+                                Admin
+                            </a>
+                        </li>
 
-                    <li class="breadcrumb-item">
-                        <a href="{{route('scm-bid.index')}}">
-                            Bids
-                        </a>
-                    </li>
+                        <li class="breadcrumb-item">
+                            <a href="{{route('scm-bid.index')}}">
+                                Bids
+                            </a>
+                        </li>
 
-                    <li class="breadcrumb-item ">
-                        <a href="{{route('scm-bid.list')}}">
-                            Bid List
-                        </a>
-                    </li>
 
-                    <li class="breadcrumb-item">
-                        <a href="{{route('scm-bid.bid.show',['single_bid'=>$bid->id])}}">
-                            Show Bid {{$bid->getName()}}
-                        </a>
-                    </li>
 
-                    <li class="breadcrumb-item active">
-                        <a href="{{route('scm-bid.bid.edit',['single_bid'=>$bid->id])}}">
+                        <li class="breadcrumb-item">
+                            <a href="{{route('scm-bid.bid.show',['single_bid'=>$bid->id])}}">
+                                 Bid {{$bid->getName()}}
+                            </a>
+                        </li>
+
+                        <li class="breadcrumb-item active" aria-current="page">
                             Edit Bid
-                        </a>
-                    </li>
+                        </li>
 
-                </ol>
-                <a href="{{route('scm-bid.bid.show',['single_bid'=>$bid->id])}}" class="btn btn-secondary float-end">
-                    Show {{$bid->getName()}}
-                </a>
-            </div>
+                    </ol>
+                </nav>
+            </section> <!-- /scm-page-header -->
 
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title">
-                        Edit {{$bid->getName()}}
-                    </h4>
-                </div>
-                <div class="card-body">
-                    @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/shared/bid-form',[
-                        'bid'=>$bid,
-                        'contractors'=>$contractors
-                    ])
-
-                    @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/shared/file-list',[
-                       'bid'=>$bid,'b_edit'=>true
-                    ])
-
-                    <div class="mt-5">
-                        @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/edit/bid-add-files',[
-                       'bid'=>$bid
-                   ])
+            <section>
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">
+                            Edit {{$bid->getName()}}
+                        </h4>
                     </div>
+                    <div class="card-body">
+                        @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/shared/bid-form',[
+                            'bid'=>$bid,
+                            'contractors'=>$contractors
+                        ])
 
-                </div> <!-- /card-body -->
-            </div> <!-- /card -->
+                        @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/shared/file-list',[
+                           'bid'=>$bid,'b_edit'=>true
+                        ])
+
+                        <div class="mt-5">
+                            @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/edit/bid-add-files',[
+                           'bid'=>$bid
+                       ])
+                        </div>
+
+                    </div> <!-- /card-body -->
+                </div> <!-- /card -->
+            </section>
+
+
 
 
 

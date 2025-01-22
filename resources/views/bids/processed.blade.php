@@ -16,36 +16,41 @@
 
         <div class="container container-xl mt-0">
 
-            <!-- row -->
-            <div class="page-titles mb-2">
-                <ol class="breadcrumb">
-                    <li>
-                        <h5 class="bc-title">Bids</h5>
-                    </li>
+            <section class="scm-page-header mt-1">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="{{route('dashboard')}}">
+                                Dashboard
+                            </a>
+                        </li>
 
-                    <li class="breadcrumb-item">
-                        <a href="{{route('dashboard')}}">
-                            @include('layouts.common.home-svg')
-                            Home
-                        </a>
-                    </li>
+                        <li class="breadcrumb-item" >
+                            <a href="{{route('admin')}}">
+                                Admin
+                            </a>
+                        </li>
+
+                        <li class="breadcrumb-item">
+                            <a href="{{route('scm-bid.index')}}">
+                                Bids
+                            </a>
+                        </li>
 
 
-                    <li class="breadcrumb-item">
-                        <a href="{{route('scm-bid.index')}}">
-                            Bids
-                        </a>
-                    </li>
+                        <li class="breadcrumb-item active" aria-current="page">
+                            Processed Bids
+                        </li>
 
-                    <li class="breadcrumb-item active">
-                        <a href="{{route('scm-bid.list')}}">
-                           Processed Bids
-                        </a>
-                    </li>
-                </ol>
-            </div>
+                    </ol>
+                </nav>
+            </section> <!-- /scm-page-header -->
 
-            @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/stats/processed_table',['resolved'=>$resolved])
+           <section>
+               @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/stats/processed_table',['resolved'=>$resolved])
+           </section>
+
+
 
 
 

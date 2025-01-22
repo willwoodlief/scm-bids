@@ -15,43 +15,53 @@
 
         <div class="container container-xl mt-0">
 
-            <!-- row -->
-            <div class="page-titles mb-2">
-                <ol class="breadcrumb">
-                    <li>
-                        <h5 class="bc-title">Bids</h5>
-                    </li>
+            <section class="scm-page-header mt-1">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="{{route('dashboard')}}">
+                                Dashboard
+                            </a>
+                        </li>
 
-                    <li class="breadcrumb-item">
-                        <a href="{{route('dashboard')}}">
-                            @include('layouts.common.home-svg')
-                            Home
-                        </a>
-                    </li>
+                        <li class="breadcrumb-item" >
+                            <a href="{{route('admin')}}">
+                                Admin
+                            </a>
+                        </li>
 
-
-                    <li class="breadcrumb-item active">
-                        <a href="{{route('scm-bid.index')}}">
+                        <li class="breadcrumb-item active" aria-current="page">
                             Bids
-                        </a>
-                    </li>
-                </ol>
-                <a class="btn btn-outline-secondary float-end" href="{{route('scm-bid.list')}}">
-                    Active Bids
-                </a>
-                <a class="btn btn-outline-secondary float-end" href="{{route('scm-bid.show_processed')}}">
-                    Resolved Bids
-                </a>
-            </div>
+                        </li>
 
-            @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/index/stats-overview')
 
-            @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/index/small-bid-list',[
-                      'bids'=>$bids
-                   ])
+                        <li class="breadcrumb-item">
+                            <a  href="{{route('scm-bid.list')}}">
+                                Active Bids
+                            </a>
+                        </li>
 
-            @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/stats/charts')
+                        <li class="breadcrumb-item">
+                            <a   href="{{route('scm-bid.show_processed')}}">
+                                Resolved Bids
+                            </a>
+                        </li>
+                    </ol>
 
+
+
+                </nav>
+            </section>
+
+            <section>
+                @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/index/stats-overview')
+
+                @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/index/small-bid-list',[
+                          'bids'=>$bids
+                       ])
+
+                @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/stats/charts')
+            </section>
 
 
         </div> <!-- container container-xl -->

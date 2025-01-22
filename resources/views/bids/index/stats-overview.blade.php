@@ -9,7 +9,7 @@
             <div class="col-4">
                 <div class="alert alert-light text-center">
                     All Bids
-                    <span class="badge badge-light regular-bootstap">
+                    <span class="badge text-bg-light regular-bootstap">
                         {{\Scm\PluginBid\Helpers\OverallStats::getTotalBids()}}
                     </span>
 
@@ -20,11 +20,11 @@
 
                 <div class="alert alert-success text-center">
                     Accepted
-                    <span class="badge badge-success">
+                    <span class="badge text-bg-success ">
                         {{\Scm\PluginBid\Helpers\OverallStats::getTotalSuccess()}}
                     </span>
 
-                    <span class="badge badge-success float-end">
+                    <span class="badge text-bg-success float-end">
                         {{\App\Helpers\Utilities::formatMoney( \Scm\PluginBid\Helpers\OverallStats::getTotalSuccessBudget() )}}
                     </span>
                 </div>
@@ -34,7 +34,7 @@
             <div class="col-4">
                 <div class="alert alert-danger text-center">
                     Not accepted
-                    <span class="badge badge-danger">
+                    <span class="badge text-bg-danger">
                         {{\Scm\PluginBid\Helpers\OverallStats::getTotalFailed()}}
                     </span>
 

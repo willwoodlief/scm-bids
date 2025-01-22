@@ -13,35 +13,35 @@
     @section('main_content')
 
         <div class="container container-xl mt-0">
+            <section class="scm-page-header mt-1">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="{{route('dashboard')}}">
+                                Dashboard
+                            </a>
+                        </li>
 
-            <!-- row -->
-            <div class="page-titles mb-2">
-                <ol class="breadcrumb">
-                    <li>
-                        <h5 class="bc-title">Bids</h5>
-                    </li>
+                        <li class="breadcrumb-item" >
+                            <a href="{{route('admin')}}">
+                                Admin
+                            </a>
+                        </li>
 
-                    <li class="breadcrumb-item">
-                        <a href="{{route('dashboard')}}">
-                            @include('layouts.common.home-svg')
-                            Home
-                        </a>
-                    </li>
+                        <li class="breadcrumb-item">
+                            <a href="{{route('scm-bid.index')}}">
+                                Bids
+                            </a>
+                        </li>
 
-
-                    <li class="breadcrumb-item">
-                        <a href="{{route('scm-bid.index')}}">
-                            Bids
-                        </a>
-                    </li>
-
-                    <li class="breadcrumb-item active">
-                        <a href="{{route('scm-bid.list')}}">
+                        <li class="breadcrumb-item active" aria-current="page">
                             Bid List
-                        </a>
-                    </li>
-                </ol>
-            </div>
+                        </li>
+
+                    </ol>
+                </nav>
+            </section> <!-- /scm-page-header -->
+
 
             <div class="card">
                 <div class="card-header">

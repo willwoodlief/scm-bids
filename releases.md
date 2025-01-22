@@ -1,4 +1,7 @@
-# version 1.0.3  January 17,2025
+# version 1.0.4  January 22,2025
+* Updated navigation and some structures for new theme
+
+* # version 1.0.3  January 17,2025
 * Add config to check pdf or not, because it takes up memory for large files
 
 # version 1.0.2  January 17,2025

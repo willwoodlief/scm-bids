@@ -52,11 +52,6 @@ class PluginLogic extends Plugin {
 
         }, 20, 1);
 
-        Eventy::addFilter(Plugin::FILTER_TOTAL_SIZE_FILES, function( int $total_file_size) {
-            //todo add in the extra size used
-            return $total_file_size;
-
-        }, 20, 1);
 
         Eventy::addFilter(Plugin::FILTER_FRAME_END_TOP_MENU, function( string $extra_menu_stuff) {
             $item =view(ScmPluginBid::getBladeRoot().'::hooks/menu/top-menu-item-for-this',[])->render();
