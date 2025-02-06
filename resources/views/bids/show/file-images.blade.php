@@ -32,4 +32,3 @@
     });
 </script>
 
-<script src="{{asset('app-assets/vendor/lightgallery/js/lightgallery-all.min.js')}}"></script>
