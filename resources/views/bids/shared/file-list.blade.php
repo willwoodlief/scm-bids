@@ -102,8 +102,8 @@
                 lengthChange:false ,
                 language: {
                     paginate: {
-                        next: '<i class="fa-solid fa-angle-right"></i>',
-                        previous: '<i class="fa-solid fa-angle-left"></i>'
+                        next: `<x-icons.chevron-right />`,
+                        previous: `<x-icons.chevron-left />`
                     }
 
                 },

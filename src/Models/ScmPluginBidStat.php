@@ -1,7 +1,9 @@
 <?php
 namespace Scm\PluginBid\Models;
+use App\Helpers\General\UnitStat;
 use App\Helpers\Utilities;
 use App\Models\Contractor;
+use App\Models\Enums\UnitOfStat;
 use App\Models\Project;
 use App\Models\User;
 use Carbon\Carbon;
@@ -10,9 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
-use Scm\PluginBid\Helpers\UnitStat;
 use Scm\PluginBid\Models\Enums\TypeOfStat;
-use Scm\PluginBid\Models\Enums\UnitOfStat;
 
 
 /**
@@ -133,7 +133,7 @@ class ScmPluginBidStat extends Model
        $ret = [];
        foreach ($res as $row) {
            $ids = Utilities::to_int_array(given:explode(',',$row->ids),b_allow_zero: false);
-           $ret[] = new UnitStat(date: $row->date,number: $row->number_of??0,sum_budget: $row->sum_budget??0,covered_ids: $ids);
+           $ret[] = new UnitStat(date: $row->date,number: $row->number_of??0, sum: $row->sum_budget??0,covered_ids: $ids);
        }
 
        return $ret;

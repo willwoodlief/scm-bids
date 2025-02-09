@@ -8,22 +8,19 @@ use App\Http\Controllers\ContractorsController;
 use App\Http\Requests\ContractorSaveRequest;
 use App\Models\Contractor;
 
+use App\Models\Enums\UnitOfStat;
 use App\Models\Project;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
-
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Scm\PluginBid\Exceptions\ScmPluginBidException;
 use Scm\PluginBid\Helpers\PluginPermissions;
 use Scm\PluginBid\Models\Enums\TypeOfStat;
-use Scm\PluginBid\Models\Enums\UnitOfStat;
 use Scm\PluginBid\Models\ScmPluginBidFile;
 use Scm\PluginBid\Requests\BidSaveRequest;
-
 use Scm\PluginBid\Facades\ScmPluginBid;
-
 use Scm\PluginBid\Models\ScmPluginBidSingle;
 use Scm\PluginBid\Models\ScmPluginBidStat;
 use Illuminate\Http\Request;
