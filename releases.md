@@ -1,3 +1,6 @@
+# version 1.0.6  Feb 15, 2025
+* Fixup carbon timezones
+
 # version 1.0.5  February 6,2025
 * Removed older assets for new theme (icon and js)
 

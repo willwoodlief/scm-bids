@@ -78,7 +78,7 @@ class ScmPluginBidStat extends Model
                 $after_date_string = Carbon::parse($min_datetime,config('app.timezone'))->toDateString() ;
             } else {
                 //select one month before
-                $after_date_string = Carbon::now(config('app.timezone'))->subMonths()->toDateString();
+                $after_date_string = Carbon::now()->timezone(config('app.timezone'))->subMonths()->toDateString();
             }
 
         }
@@ -86,7 +86,7 @@ class ScmPluginBidStat extends Model
         if ($before_date) {
             $before_date_string = Carbon::parse($before_date,config('app.timezone'))->toDateString();
         } else {
-            $before_date_string = Carbon::now(config('app.timezone'))->toDateString();
+            $before_date_string = Carbon::now()->timezone(config('app.timezone'))->toDateString();
         }
 
 

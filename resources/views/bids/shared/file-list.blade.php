@@ -41,7 +41,7 @@
             </td>
 
             @php
-                $tz_ts = \Carbon\Carbon::createFromTimestamp($bid->created_at_ts,config('app.timezone'))->getTimestamp();
+                $tz_ts = \Carbon\Carbon::createFromTimestamp($bid->created_at_ts,'UTC')->timezone(config('app.timezone'))->getTimestamp();
             @endphp
 
             <td data-order="{{$tz_ts}}" data-sort="{{$tz_ts}}" >
