@@ -1,4 +1,7 @@
-# version 1.0.6  Feb 15, 2025
+# version 1.0.7  Feb 17, 2025
+* BUGFIX when installing and running migration cannot find enum class
+
+* # version 1.0.6  Feb 15, 2025
 * Fixup carbon timezones
 
 # version 1.0.5  February 6,2025

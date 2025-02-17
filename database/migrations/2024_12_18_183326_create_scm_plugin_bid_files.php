@@ -5,6 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
+
 return new class extends Migration
 {
     /**
@@ -54,7 +55,7 @@ return new class extends Migration
             $table->string('bid_file_category',15)
                 ->index()
                 ->nullable(false)
-                ->default(\Scm\PluginBid\Models\Enums\TypeOfAcceptedFile::UNKNOWN->value)
+                ->default('unknown')
                 ->comment("the type of file that is verified here");
 
             $table->timestamps();
