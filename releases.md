@@ -1,3 +1,6 @@
+# version 1.0.8  Feb 17, 2025
+* Moved file validation to core code
+
 # version 1.0.7  Feb 17, 2025
 * BUGFIX when installing and running migration cannot find enum class
 

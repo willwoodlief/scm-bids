@@ -13,7 +13,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Scm\PluginBid\Exceptions\ScmPluginBidException;
-use Scm\PluginBid\Models\Enums\TypeOfAcceptedFile;
+use App\Models\Enums\TypeOfAcceptedFile;
 
 
 /**

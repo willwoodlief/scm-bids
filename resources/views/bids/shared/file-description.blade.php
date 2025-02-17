@@ -4,18 +4,18 @@
      */
 @endphp
 
-@if($bid_file->bid_file_category === \Scm\PluginBid\Models\Enums\TypeOfAcceptedFile::IMAGE)
+@if($bid_file->bid_file_category === \App\Models\Enums\TypeOfAcceptedFile::IMAGE)
     Image
-@elseif($bid_file->bid_file_category === \Scm\PluginBid\Models\Enums\TypeOfAcceptedFile::COMPRESSED)
+@elseif($bid_file->bid_file_category === \App\Models\Enums\TypeOfAcceptedFile::COMPRESSED)
     Zip
-@elseif($bid_file->bid_file_category === \Scm\PluginBid\Models\Enums\TypeOfAcceptedFile::PDF)
+@elseif($bid_file->bid_file_category === \App\Models\Enums\TypeOfAcceptedFile::PDF)
     PDF
-@elseif($bid_file->bid_file_category === \Scm\PluginBid\Models\Enums\TypeOfAcceptedFile::SPREADSHEET)
+@elseif($bid_file->bid_file_category === \App\Models\Enums\TypeOfAcceptedFile::SPREADSHEET)
     Spreadsheet
-@elseif($bid_file->bid_file_category === \Scm\PluginBid\Models\Enums\TypeOfAcceptedFile::DOCUMENT)
+@elseif($bid_file->bid_file_category === \App\Models\Enums\TypeOfAcceptedFile::DOCUMENT)
     Document
-@elseif($bid_file->bid_file_category === \Scm\PluginBid\Models\Enums\TypeOfAcceptedFile::PRESENTATION)
+@elseif($bid_file->bid_file_category === \App\Models\Enums\TypeOfAcceptedFile::PRESENTATION)
     Presentation
-@elseif($bid_file->bid_file_category === \Scm\PluginBid\Models\Enums\TypeOfAcceptedFile::UNKNOWN)
+@elseif($bid_file->bid_file_category === \App\Models\Enums\TypeOfAcceptedFile::UNKNOWN)
     Unknown
 @endif
