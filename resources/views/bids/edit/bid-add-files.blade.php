@@ -4,8 +4,6 @@
      */
 @endphp
 
-<script src="https://unpkg.com/dropzone@6.0.0-beta.2/dist/dropzone-min.js"></script>
-<link href="https://unpkg.com/dropzone@6.0.0-beta.2/dist/dropzone.css" rel="stylesheet" type="text/css" />
 
 
 <form action="{{route('scm-bid.files.add',['single_bid'=>$bid->id])}}" method="post" enctype="multipart/form-data" id="bid-dropzone" class="dropzone">
