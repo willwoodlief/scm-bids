@@ -254,9 +254,9 @@ class ScmPluginBidAdminController extends BaseController
             if ($request->ajax()) {
                 return response()->json(['success' => true, 'bid' => $bid,'stat'=> $stat,
                     'project_id' => $project_id, 'project_files' => $project_files,
-                    'project_edit_url'=>route('project.edit',['project_id'=>$project_id])]);
+                    'project_edit_url'=>route('project.edit',['project'=>$project_id])]);
             } else {
-                return redirect()->route('project.edit',['project_id'=>$project_id]);
+                return redirect()->route('project.edit',['project'=>$project_id]);
             }
         } catch (\Exception $e) {
             //if error, move the bid files back so those still work (don't loose files)

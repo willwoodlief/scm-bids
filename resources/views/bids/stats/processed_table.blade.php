@@ -49,7 +49,7 @@
                     </td>
 
                     <td data-order="{{$stat->stat_contractor->getName()}}" data-sort="{{$stat->stat_contractor->getName()}}">
-                        <a href="{{route('contractor.view',['contractor_id'=>$stat->stats_contractor_id])}}">
+                        <a href="{{route('contractor.view',['contractor'=>$stat->stats_contractor_id])}}">
                             {{$stat->stat_contractor->getName()}}
                             <img src="{{$stat->stat_contractor->get_image_asset_path()}}" alt="" style="height: 2rem; width: auto;" class="ms-1">
                         </a>

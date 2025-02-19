@@ -80,7 +80,7 @@
                                 </td>
 
                                 <td data-order="{{$bid->bid_contractor->getName()}}" data-sort="{{$bid->bid_contractor->getName()}}">
-                                    <a href="{{route('contractor.view',['contractor_id'=>$bid->bid_contractor_id])}}">
+                                    <a href="{{route('contractor.view',['contractor'=>$bid->bid_contractor_id])}}">
                                         {{$bid->bid_contractor->getName()}}
                                         <img src="{{$bid->bid_contractor->get_image_asset_path()}}" alt="" style="height: 2rem; width: auto;" class="ms-1">
                                     </a>
