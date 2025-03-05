@@ -10,6 +10,7 @@
 
         <a href="{{$photo->get_url()}}"
            data-src="{{$photo->get_url()}}"
+           data-exthumbimage="{{asset($photo->getRelativePath())}}"
            class="mb-1 col-lg-4 col-xl-4 col-sm-4 col-6"
         >
             <img src="{{$photo->get_url()}}" alt="" class="img-fluid rounded">

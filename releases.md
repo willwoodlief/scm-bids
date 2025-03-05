@@ -1,4 +1,7 @@
-# version 1.0.9  Feb 19, 2025
+# version 1.0.10  March 5, 2025
+* Slideshow thumbnails were missing
+
+* # version 1.0.9  Feb 19, 2025
 * Updated some routes changed in core
 
 * # version 1.0.8  Feb 17, 2025
