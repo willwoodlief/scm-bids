@@ -2,6 +2,7 @@
 namespace Scm\PluginBid;
 
 
+use App\Helpers\Utilities;
 use App\Plugins\Plugin;
 
 use Scm\PluginBid\Helpers\PluginPermissions;
@@ -54,6 +55,9 @@ class PluginLogic extends Plugin {
 
 
         Eventy::addFilter(Plugin::FILTER_FRAME_END_TOP_MENU, function( string $extra_menu_stuff) {
+            if (!PluginPermissions::canSeeBidPlugin(Utilities::get_logged_user())) {
+                return $extra_menu_stuff;
+            }
             $item =view(ScmPluginBid::getBladeRoot().'::hooks/menu/top-menu-item-for-this',[])->render();
             return $extra_menu_stuff."\n".$item;
 

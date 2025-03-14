@@ -1,4 +1,7 @@
-# version 1.0.10  March 5, 2025
+# version 1.0.11  March 14, 2025
+* Now shows the menu item only when person is allowed to make or see one or more bids
+
+* # version 1.0.10  March 5, 2025
 * Slideshow thumbnails were missing
 
 * # version 1.0.9  Feb 19, 2025

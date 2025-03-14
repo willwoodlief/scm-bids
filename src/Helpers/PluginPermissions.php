@@ -179,5 +179,14 @@ class PluginPermissions
         return [UserRolePermission::NO_ID_AVAILABLE]; //will not match any employee
     }
 
+    public static function canSeeBidPlugin(?User $user) : bool {
+        if (!$user) {return false;}
+        $bid_ids_can_see = static::getBidIdsUserCanView(user: $user);
+        if (count($bid_ids_can_see) === 1 && $bid_ids_can_see[0] === UserRolePermission::NO_ID_AVAILABLE) {
+            return false;
+        }
+        return true;
+    }
+
 
 }
