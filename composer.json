@@ -1,7 +1,7 @@
 {
     "name": "scm/scm-plugin-bids",
     "description": "Keep track of bids, turn successful bids into projects",
-    "version": "1.0.11",
+    "version": "1.0.12",
     "keywords": [
         "scm",
         "laravel",
@@ -46,7 +46,9 @@
                 "relative_path":"resources/dist"
             },
             "plugin_active": "yes",
-            "database_migrations_folder": "database/migrations"
+            "database_migrations_folder": "database/migrations",
+            "initialize_file": "database/init/up.php",
+            "cleanup_file": "database/init/down.php"
         }
     },
     "minimum-stability": "dev",

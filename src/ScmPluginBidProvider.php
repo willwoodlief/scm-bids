@@ -28,12 +28,7 @@ class ScmPluginBidProvider extends PackageServiceProvider
             ->hasViews(static::VIEW_BLADE_ROOT)
             ->hasRoute('web')
             ->hasAssets()
-            ->hasMigrations(
-'2024_12_18_181437_create_scm_plugin_bid_singles',
-                '2024_12_18_182343_create_scm_plugin_bid_stats',
-                '2024_12_18_183326_create_scm_plugin_bid_files',
-                '2025_01_08_105408_add_permissions_for_bids'
-            )
+            ->discoversMigrations()
 
             ->hasInstallCommand(function(InstallCommand $command) {
 

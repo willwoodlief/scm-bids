@@ -1,4 +1,7 @@
-# version 1.0.11  March 14, 2025
+# version 1.0.12  March 27, 2025
+* Now using init and cleanup scripts for permissions
+
+* # version 1.0.11  March 14, 2025
 * Now shows the menu item only when person is allowed to make or see one or more bids
 
 * # version 1.0.10  March 5, 2025

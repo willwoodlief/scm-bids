@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        \Scm\PluginBid\Helpers\PluginPermissions::doInit();
+
 
         foreach (static::TRIGGERS as $trigger_name) {
             $trigger_file = $trigger_name.'.sql';
@@ -30,7 +30,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        \Scm\PluginBid\Helpers\PluginPermissions::doRemove();
+
 
         foreach (static::TRIGGERS as $trigger_name) {
             $sql = "DROP TRIGGER IF EXISTS $trigger_name";
