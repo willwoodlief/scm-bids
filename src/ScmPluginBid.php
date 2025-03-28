@@ -33,7 +33,7 @@ class ScmPluginBid
 
     public function unserializeContents(string $path_relative_storage) : mixed {
         $path_relative_storage = trim($path_relative_storage,'/');
-        $ser = Storage::disk('local')->get(static::THIS_PLUGIN_STORAGE_ROOT.DIRECTORY_SEPARATOR.$path_relative_storage);
+        $ser = Storage::disk()->get(static::THIS_PLUGIN_STORAGE_ROOT.DIRECTORY_SEPARATOR.$path_relative_storage);
         $ret = unserialize($ser);
         if (!$ret) {return null;}
         return $ret;
@@ -41,7 +41,7 @@ class ScmPluginBid
 
     public function serializeContents(string $path_relative_storage,mixed $content) : void {
         $path_relative_storage = trim($path_relative_storage,'/');
-        $ret = Storage::disk('local')->put(static::THIS_PLUGIN_STORAGE_ROOT.DIRECTORY_SEPARATOR.$path_relative_storage, serialize($content));
+        $ret = Storage::disk()->put(static::THIS_PLUGIN_STORAGE_ROOT.DIRECTORY_SEPARATOR.$path_relative_storage, serialize($content));
         if ($ret === false) {
             throw new ScmPluginBidException("could not write file $path_relative_storage");
         }

@@ -1,3 +1,6 @@
+# version 1.0.13  March 27, 2025
+* Now using the default storage method, and not local
+
 # version 1.0.12  March 27, 2025
 * Now using init and cleanup scripts for permissions
 
