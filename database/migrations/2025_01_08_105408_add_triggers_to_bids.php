@@ -14,6 +14,10 @@ return new class extends Migration
     public function up(): void
     {
 
+        foreach (static::TRIGGERS as $trigger_name) {
+            $sql = "DROP TRIGGER IF EXISTS $trigger_name";
+            DB::statement($sql);
+        }
 
         foreach (static::TRIGGERS as $trigger_name) {
             $trigger_file = $trigger_name.'.sql';

@@ -1,4 +1,7 @@
-# version 1.0.14  March 29, 2025
+# version 1.0.15  March 29, 2025
+* Improve trigger migration
+
+* # version 1.0.14  March 29, 2025
 * Now using disabled health middleware
 
 * # version 1.0.13  March 27, 2025
