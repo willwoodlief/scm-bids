@@ -193,7 +193,7 @@ class ScmPluginBidSingle extends Model
 
     public function cleanup_resources() {
         $relative_path = $this->get_document_directory();
-        $absolute_path = realpath(storage_path('app'. DIRECTORY_SEPARATOR .$relative_path));
+        $absolute_path = realpath(storage_path('app'. DIRECTORY_SEPARATOR .$relative_path)); //todo remove abs path
         if (!$absolute_path) {return;}
 
         $it = new RecursiveDirectoryIterator($absolute_path, RecursiveDirectoryIterator::SKIP_DOTS);
