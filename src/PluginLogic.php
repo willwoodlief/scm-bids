@@ -5,6 +5,7 @@ namespace Scm\PluginBid;
 use App\Helpers\Utilities;
 use App\Plugins\Plugin;
 
+use App\Plugins\PluginRef;
 use Scm\PluginBid\Helpers\PluginPermissions;
 use Scm\PluginBid\Models\ScmPluginBidFile;
 use Scm\PluginBid\Models\ScmPluginBidSingle;
@@ -231,6 +232,42 @@ class PluginLogic extends Plugin {
                     user: $user,category_name: $category_name,permission_name: $permission_name,
                     per_unit_of: $per_unit_of,per_unit_id: $per_unit_id);
             }, 20, 5);
+
+
+        Eventy::addFilter(Plugin::FILTER_GET_EXPORTABLE_FILES, function( array $all_exports ): array {
+            $all_exports['scm-plugin-bid-files'] = [ 'public' => []];
+            ScmPluginBidFile::orderBy('id')->chunk(100, function($records) use(&$all_exports) {
+                /** @var ScmPluginBidFile $bid_file */
+                foreach($records as $bid_file)
+                {
+                    $relative_file = $bid_file->getRelativePath();
+                    if ($relative_file) {
+                        $all_exports['scm-plugin-bid-files']['public'][] = $relative_file;
+                    }
+                }
+            });
+            return $all_exports;
+        }, 20, 1);
+
+
+        Eventy::addFilter(Plugin::FILTER_GET_STATIC_RESOURCE_EXPORTS,
+            function( array $all_exports )
+            : array
+            {
+                $things = [
+                    'css/scm-plugin-bid.css',
+                    'js/scm-plugin-bid.js'
+                ];
+
+                $all_exports['scm-plugin-bids'] = [ ];
+                foreach ($things as $relative_path) {
+                    $relative_url = PluginRef::PLUGINS_FOLDER. DIRECTORY_SEPARATOR . ScmPluginBid::getPluginRef()->getResourceRelativePath($relative_path);
+                    $abs_path = dirname(__DIR__,1) . DIRECTORY_SEPARATOR . 'resources/dist/'.$relative_path;
+                    $all_exports['scm-plugin-bids'][] = ['relative_url'=>$relative_url,'absolute_path'=>$abs_path];
+                }
+
+                return $all_exports;
+            }, 15, 1);
 
     }
 

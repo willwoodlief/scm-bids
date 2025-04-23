@@ -1,3 +1,6 @@
+# version 1.0.16  April,22 2025
+* Implements filters for s3 migration
+
 # version 1.0.15  March 29, 2025
 * Improve trigger migration
 
