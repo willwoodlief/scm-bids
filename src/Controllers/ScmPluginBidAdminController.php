@@ -3,6 +3,8 @@ namespace Scm\PluginBid\Controllers;
 
 
 
+use App\Exceptions\ScmException;
+use App\Helpers\General\DownloadResponse;
 use App\Helpers\Utilities;
 use App\Http\Controllers\ContractorsController;
 use App\Http\Requests\ContractorSaveRequest;
@@ -24,6 +26,9 @@ use Scm\PluginBid\Facades\ScmPluginBid;
 use Scm\PluginBid\Models\ScmPluginBidSingle;
 use Scm\PluginBid\Models\ScmPluginBidStat;
 use Illuminate\Http\Request;
+use Spatie\TemporaryDirectory\Exceptions\PathAlreadyExists;
+use Spatie\TemporaryDirectory\TemporaryDirectory;
+use SplFileInfo;
 use Symfony\Component\HttpFoundation\Response;
 
 
@@ -177,16 +182,21 @@ class ScmPluginBidAdminController extends BaseController
         }
     }
 
-    public function download_file(ScmPluginBidSingle $bid,ScmPluginBidFile $bid_file) {
+    /**
+     * @throws PathAlreadyExists
+     */
+    public function download_file(ScmPluginBidSingle $bid, ScmPluginBidFile $bid_file) {
 
         if ($bid_file->owning_bid_id !== $bid->id) {
             throw new ScmPluginBidException("Bid file not found for id#$bid_file->id that belongs to bid #$bid->id");
         }
-        $path = $bid_file->getAbsolutePath();
-        if (!$path) {
-            abort(404,"Cannot find the absolute path for file ". $bid_file->getName());
+
+        if (!$bid_file->getRelativePath()) {
+            throw new ScmPluginBidException("Bid file not there");
         }
-        return response()->download($path,$bid_file->bid_file_human_name);
+
+        return DownloadResponse::make(relative_path: $bid_file->getRelativePath(),
+            file_human_name: $bid_file->bid_file_human_name,file_name: $bid_file->bid_file_name);
     }
     /**
      * @throws \Exception

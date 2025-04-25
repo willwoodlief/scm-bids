@@ -10,8 +10,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Http\UploadedFile;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
 use Scm\PluginBid\Exceptions\ScmPluginBidException;
 use Scm\PluginBid\Facades\ScmPluginBid;
 
@@ -88,7 +86,9 @@ class ScmPluginBidSingle extends Model
         });
 
         static::deleted(function (ScmPluginBidSingle $bid) {
-            $bid->cleanup_resources();
+            foreach ($bid->bid_files as $file) {
+                $file->delete();
+            }
         });
 
         static::updated(function (ScmPluginBidSingle $bid) {
@@ -191,23 +191,6 @@ class ScmPluginBidSingle extends Model
     const DOCUMENTS_FOLDER = 'documents';
     const BIDS_FOLDER = 'bids';
 
-    public function cleanup_resources() {
-        $relative_path = $this->get_document_directory();
-        $absolute_path = realpath(storage_path('app'. DIRECTORY_SEPARATOR .$relative_path)); //todo remove abs path
-        if (!$absolute_path) {return;}
-
-        $it = new RecursiveDirectoryIterator($absolute_path, RecursiveDirectoryIterator::SKIP_DOTS);
-        $files = new RecursiveIteratorIterator($it,
-            RecursiveIteratorIterator::CHILD_FIRST);
-        foreach($files as $file) {
-            if ($file->isDir()){
-                rmdir($file->getPathname());
-            } else {
-                unlink($file->getPathname());
-            }
-        }
-        rmdir($absolute_path);
-    }
 
     public function get_document_directory() : string  {
         if (!$this->id) { throw new ScmPluginBidException("Trying get bid document directory with no bid id");}

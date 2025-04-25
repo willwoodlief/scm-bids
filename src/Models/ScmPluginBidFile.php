@@ -164,7 +164,7 @@ class ScmPluginBidFile extends Model
             return $bid_file->getAbsolutePath();
 
         } catch (\Exception $what) {
-            if($bid_file) {unlink($bid_file->getAbsolutePath());}
+            $bid_file?->cleanup_resources();
             throw $what;
         }
     }
@@ -194,11 +194,8 @@ class ScmPluginBidFile extends Model
     }
 
     public function cleanup_resources() {
-        $absolute_path = $this->getAbsolutePath();
-        if (!$absolute_path) {return;}
-
-        if (file_exists($absolute_path)) {
-            unlink($absolute_path);
+        if(Storage::exists($this->getRelativePath())) {
+            Storage::delete($this->getRelativePath());
         }
     }
 
