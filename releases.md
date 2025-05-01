@@ -1,4 +1,7 @@
-# version 1.0.17  April,22 2025
+# version 1.0.18  May,1 2025
+* Added env variable description in the composer.json
+
+* # version 1.0.17  April,22 2025
 * Bugfixes for s3 migration
 
 * # version 1.0.16  April,22 2025
