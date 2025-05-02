@@ -194,9 +194,12 @@ class ScmPluginBidFile extends Model
     }
 
     public function cleanup_resources() {
-        if(Storage::exists($this->getRelativePath())) {
-            Storage::delete($this->getRelativePath());
+        if ($this->getRelativePath()) {
+            if(Storage::exists($this->getRelativePath())) {
+                Storage::delete($this->getRelativePath());
+            }
         }
+
     }
 
     public function getName() : string {

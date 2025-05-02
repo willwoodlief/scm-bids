@@ -1,3 +1,6 @@
+# version 1.0.19  May 1 2025
+* Now testing for empty file before a check for existing
+
 # version 1.0.18  May,1 2025
 * Added env variable description in the composer.json
 
