@@ -57,7 +57,7 @@
                         <thead>
                         <tr>
                             <th>Bid Name</th>
-                            <th>Contractor</th>
+                            <th style="text-transform: capitalize;">{{__('msg.contractor')}}</th>
                             <th>Added By</th>
                             <th>When</th>
                             <th style="width: 5rem"></th>

@@ -80,7 +80,7 @@
                                     spinner.hide();
                                     Swal.fire({
                                         icon: 'error',
-                                        title: 'Cannot create contractor',
+                                        title: 'Cannot create {{__('msg.contractor')}}',
                                         text: data.message,
                                     })
                                 }

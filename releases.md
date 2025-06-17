@@ -1,4 +1,7 @@
-# version 1.0.19  May 1 2025
+# version 1.0.20  June 17 2025
+* Using P.I.T translations
+
+* # version 1.0.19  May 1 2025
 * Now testing for empty file before a check for existing
 
 # version 1.0.18  May,1 2025

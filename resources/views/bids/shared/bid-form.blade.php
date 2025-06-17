@@ -51,9 +51,9 @@
             </div>
 
             <div class="col-sm-6 mb-3">
-                <label class="form-label" for="contractor-list">General Contractor</label>
+                <label class="form-label" for="contractor-list">{{__('msg.contractor')}}</label>
                 <select name="bid_contractor_id" id="contractor-list" class="form-control" autocomplete="off">
-                    <option selected disabled>Select Contractor</option>
+                    <option selected disabled>Select {{__('msg.contractor')}}</option>
                     @foreach ($contractors as $contractor)
                         <option value="{{$contractor->id}}" @if(intval(old('bid_contractor_id',$bid->bid_contractor_id)) === $contractor->id) selected @endif>
                             {{$contractor->getName()}}
@@ -66,7 +66,7 @@
             <div class="col-sm-3 mb-3">
                 <div class="mt-1">
                     <button type="button" class="btn btn-outline-primary scm-bid-plugin-new-contractor-action  mt-4">
-                        New Contractor
+                        New {{__('msg.contractor')}}
                     </button>
                 </div>
 

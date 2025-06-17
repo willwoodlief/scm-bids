@@ -14,7 +14,7 @@
             <tr>
                 <th>Bid Name</th>
                 <th>Status</th>
-                <th>Contractor</th>
+                <th style="text-transform: capitalize;" >{{__('msg.contractor')}}</th>
                 <th>Added by</th>
                 <th>Resolved at</th>
                 <th>Budget</th>
