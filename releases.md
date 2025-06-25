@@ -1,4 +1,7 @@
-# version 1.0.20  June 17 2025
+# version 1.0.21  June 25 2025
+* BUGFIX could not accept project because of file errors
+
+* # version 1.0.20  June 17 2025
 * Using P.I.T translations
 
 * # version 1.0.19  May 1 2025

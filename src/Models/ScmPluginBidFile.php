@@ -222,12 +222,11 @@ class ScmPluginBidFile extends Model
 
         $old_path = $this->getRelativePath();
         $project_directory = Project::calcuate_document_directory($project_id);
-        $abs_project_doc_path = Project::create_document_directory($project_id);
-        Utilities::markUnusedVar($abs_project_doc_path);
+        Project::create_document_directory($project_id);
+
         $new_path = $project_directory . DIRECTORY_SEPARATOR . $this->bid_file_name;
 
         Storage::disk()->move($old_path, $new_path);
-        chmod($project_directory, 0755);
         Storage::setVisibility($new_path, 'public');
 
 
