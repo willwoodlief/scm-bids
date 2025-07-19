@@ -90,7 +90,7 @@
         </div> <!-- /row -->
 
         <div class="card-footer">
-            <button type="submit" class="btn btn-primary">
+            <button type="submit" class="btn btn-solid-primary">
                 @if($bid->id) Update @else Create @endif
             </button>
         </div>

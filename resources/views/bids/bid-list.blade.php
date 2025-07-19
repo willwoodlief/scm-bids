@@ -48,7 +48,7 @@
                     <h4 class="card-title">
                         List of pending bids
                     </h4>
-                    <a class="btn btn-outline-primary float-end" href="{{route('scm-bid.new')}}">
+                    <a class="btn btn-solid-primary float-end" href="{{route('scm-bid.new')}}">
                         New Bid
                     </a>
                 </div>

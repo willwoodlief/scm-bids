@@ -33,7 +33,7 @@
                     <td data-order="{{$status_int}}" data-sort="{{$status_int}}">
                         @if($stat->bid_success_at)
                             <span class="alert alert-success">
-                                <a href="{{route('project.view', ['project_id'=>$stat->stats_project_id])}}">
+                                <a href="{{route('project.view', ['project'=>$stat->stats_project_id])}}">
                                     {{$stat->stat_project->getName()}}
                                 </a>
                             </span>
