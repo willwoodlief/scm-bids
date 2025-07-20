@@ -161,7 +161,7 @@ class ScmPluginBidFile extends Model
             $bid_file->save();
 
 
-            return $bid_file->getAbsolutePath();
+            return $bid_file->getRelativePath();
 
         } catch (\Exception $what) {
             $bid_file?->cleanup_resources();
@@ -181,11 +181,6 @@ class ScmPluginBidFile extends Model
 
     }
 
-    public function getAbsolutePath() : ?string {
-        $relative = $this->getRelativePath();
-        if (!$relative) {return null;}
-        return realpath(storage_path('app'. DIRECTORY_SEPARATOR .$relative));
-    }
 
     public function get_url() : ?string {
         $relative = $this->getRelativePath();

@@ -162,7 +162,9 @@ class ScmPluginBidAdminController extends BaseController
         } catch (\Exception $e) {
             DB::rollback();
             foreach ($paths as $path) {
-                unlink($path);
+                if(Storage::exists($path) ) {
+                    Storage::delete($path);
+                }
             }
             throw $e;
         }

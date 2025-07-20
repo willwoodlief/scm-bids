@@ -1,4 +1,7 @@
-# version 1.1.22   July 18,2025
+# version 1.1.23   July 20,2025
+* BUGFIX absolute path of file used in error handling
+
+* # version 1.1.22   July 18,2025
 * Updated lightbox code and route notation
 
 # version 1.0.21  June 25 2025
