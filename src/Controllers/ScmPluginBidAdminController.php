@@ -3,7 +3,7 @@ namespace Scm\PluginBid\Controllers;
 
 
 
-use App\Exceptions\ScmException;
+
 use App\Helpers\General\DownloadResponse;
 use App\Helpers\Utilities;
 use App\Http\Controllers\ContractorsController;
@@ -27,8 +27,6 @@ use Scm\PluginBid\Models\ScmPluginBidSingle;
 use Scm\PluginBid\Models\ScmPluginBidStat;
 use Illuminate\Http\Request;
 use Spatie\TemporaryDirectory\Exceptions\PathAlreadyExists;
-use Spatie\TemporaryDirectory\TemporaryDirectory;
-use SplFileInfo;
 use Symfony\Component\HttpFoundation\Response;
 
 
@@ -152,20 +150,20 @@ class ScmPluginBidAdminController extends BaseController
      * @throws \Exception
      */
     public function add_files(ScmPluginBidSingle $bid, Request $request) {
-        $paths = [];
+        /** @var ScmPluginBidFile[] $bid_files */
+        $bid_files = [];
         try {
             DB::beginTransaction();
             foreach ($request->allFiles() as $file) {
-                $paths[] = $bid->process_uploaded_file($file);
+                $bid_files[] = $bid->process_uploaded_file($file);
             }
             DB::commit();
         } catch (\Exception $e) {
-            DB::rollback();
-            foreach ($paths as $path) {
-                if(Storage::exists($path) ) {
-                    Storage::delete($path);
-                }
+            foreach ($bid_files as $biddy) {
+                $biddy->cleanupFileResources();
             }
+
+            DB::rollback();
             throw $e;
         }
 
@@ -193,11 +191,11 @@ class ScmPluginBidAdminController extends BaseController
             throw new ScmPluginBidException("Bid file not found for id#$bid_file->id that belongs to bid #$bid->id");
         }
 
-        if (!$bid_file->getRelativePath()) {
+        if (!$bid_file->getFileRelativePath()) {
             throw new ScmPluginBidException("Bid file not there");
         }
 
-        return DownloadResponse::make(relative_path: $bid_file->getRelativePath(),
+        return DownloadResponse::make(relative_path: $bid_file->getFileRelativePath(),
             file_human_name: $bid_file->bid_file_human_name,file_name: $bid_file->bid_file_name);
     }
     /**
@@ -275,7 +273,7 @@ class ScmPluginBidAdminController extends BaseController
             foreach ($old_bid_files as $older_bid) {
                 $project_file = $older_bid->getProjectFile();
                 if ($project_file) {
-                    Storage::disk()->move($project_file->getRelativePath(), $older_bid->getRelativePath());
+                    Storage::disk()->move($project_file->getFileRelativePath(), $older_bid->getFileRelativePath());
                 }
 
             }

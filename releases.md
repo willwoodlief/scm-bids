@@ -1,4 +1,7 @@
-# version 1.1.23   July 20,2025
+# version 1.1.24   July 20,2025
+* Now using trait to do file logic, will only work for core 1.5.34 and above
+
+* # version 1.1.23   July 20,2025
 * BUGFIX absolute path of file used in error handling
 
 * # version 1.1.22   July 18,2025

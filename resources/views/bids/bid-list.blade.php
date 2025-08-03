@@ -79,10 +79,12 @@
                                     </a>
                                 </td>
 
-                                <td data-order="{{$bid->bid_contractor->getName()}}" data-sort="{{$bid->bid_contractor->getName()}}">
+                                <td data-order="{{$bid->bid_contractor->getName()}}"
+                                    data-sort="{{$bid->bid_contractor->getName()}}">
                                     <a href="{{route('contractor.view',['contractor'=>$bid->bid_contractor_id])}}">
                                         {{$bid->bid_contractor->getName()}}
-                                        <img src="{{$bid->bid_contractor->get_image_asset_path()}}" alt="" style="height: 2rem; width: auto;" class="ms-1">
+                                        <img src="{{$bid->bid_contractor->getFileUrl()}}" alt=""
+                                             style="height: 2rem; width: auto;" class="ms-1">
                                     </a>
                                 </td>
 
@@ -96,8 +98,9 @@
                                     $tz_ts = \Carbon\Carbon::createFromTimestamp($bid->created_at_ts,'UTC')->timezone(config('app.timezone'))->getTimestamp();
                                 @endphp
 
-                                <td data-order="{{$tz_ts}}" data-sort="{{$tz_ts}}" >
-                                    <span class="will-show-long-date-time" style="white-space: normal" data-ts="{{$tz_ts}}"></span>
+                                <td data-order="{{$tz_ts}}" data-sort="{{$tz_ts}}">
+                                    <span class="will-show-long-date-time" style="white-space: normal"
+                                          data-ts="{{$tz_ts}}"></span>
                                 </td>
 
                                 <td>
@@ -173,9 +176,6 @@
             });
 
         </script>
-
-
-
 
     @endsection
 @endcomponent

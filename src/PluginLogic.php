@@ -240,7 +240,7 @@ class PluginLogic extends Plugin {
                 /** @var ScmPluginBidFile $bid_file */
                 foreach($records as $bid_file)
                 {
-                    $relative_file = $bid_file->getRelativePath();
+                    $relative_file = $bid_file->getFileRelativePath();
                     if ($relative_file) {
                         $all_exports['scm-plugin-bid-files']['public'][] = $relative_file;
                     }

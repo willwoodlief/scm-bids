@@ -194,29 +194,23 @@ class ScmPluginBidSingle extends Model
 
     public function get_document_directory() : string  {
         if (!$this->id) { throw new ScmPluginBidException("Trying get bid document directory with no bid id");}
-        return ScmPluginBid::getPluginStorageRoot().DIRECTORY_SEPARATOR.static::BIDS_FOLDER.
-            DIRECTORY_SEPARATOR . $this->id . DIRECTORY_SEPARATOR . static::DOCUMENTS_FOLDER;
-    }
-
-    public function get_image_directory() : string  {
-        if (!$this->id) { throw new ScmPluginBidException("Trying get bid image directory with no bid id");}
         return ScmPluginBid::getPluginUploadRoot().DIRECTORY_SEPARATOR.static::BIDS_FOLDER.
             DIRECTORY_SEPARATOR . $this->id . DIRECTORY_SEPARATOR . static::DOCUMENTS_FOLDER;
     }
 
+
     /**
-     * @param UploadedFile $file
-     * @return string
+
      * @throws \Exception
      */
-    public function process_uploaded_file(UploadedFile $file) : string {
+    public function process_uploaded_file(UploadedFile $file) : ScmPluginBidFile {
         if (!$this->id) { throw new \LogicException("Trying to save a file to an unsaved bid");}
         if($file->getSize() > ProjectFile::getMaxFileSize()) {
             $human_max_filesize = \App\Helpers\Utilities::human_filesize(\App\Models\ProjectFile::getMaxFileSize());
             $human_my_filesize = \App\Helpers\Utilities::human_filesize($file->getSize());
             throw new ScmPluginBidException("Bid file too big. The max is $human_max_filesize but the file is $human_my_filesize");
         }
-        return ScmPluginBidFile::process_uploaded_file($this,$file);
+        return ScmPluginBidFile::createBidFile($this,$file);
     }
 
     /**
