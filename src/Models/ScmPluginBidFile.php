@@ -136,12 +136,6 @@ class ScmPluginBidFile extends Model implements IScmFileHandling
             $bid_file = new ScmPluginBidFile();
             $bid_file->owning_bid_id = $bid->id;
             $bid_file->uploaded_by_user_id = Auth::id();
-            if ( $file->getClientOriginalName()) {
-                $file_parts = pathinfo($file->getClientOriginalName());
-                if (($file_parts['extension']??null)) {
-                    $bid_file->bid_file_extension = $file_parts['extension'];
-                }
-            }
             $bid_file->bid_file_category = TypeOfAcceptedFile::UNKNOWN;
             $bid_file->save();
             $bid_file->processUploadedFile(file: $file);
@@ -218,15 +212,13 @@ class ScmPluginBidFile extends Model implements IScmFileHandling
         $ret = null;
         try {
             if ($field) {
-                $ret = $this->where($field, $value)->first();
+                $ret = static::getBuilderForBidFile()->where($field, $value);
             } else {
                 if (ctype_digit($value)) {
-                    $ret = $this->where('id', $value)->first();
+                    $ret = static::getBuilderForBidFile(me_id: $value);
                 }
             }
-            if ($ret) {
-                $ret = static::getBuilderForBidFile(me_id: $ret->id)->first();
-            }
+            $ret = $ret?->first();
         } finally {
             if (empty($ret)) {
                 if (request()->ajax()) {
@@ -248,6 +240,25 @@ class ScmPluginBidFile extends Model implements IScmFileHandling
 
     protected function set_file_name(string $file_name) {$this->bid_file_name = $file_name; }
     protected function get_file_name(): ?string {return $this->bid_file_name;}
+
+    protected function get_file_bytes(): ?int {return $this->bid_file_size_bytes;}
+
+    protected function get_file_created_ts(): ?int {return $this->created_at_ts??null;}
+
+    protected function set_file_extension(?string $file_name) {
+        $this->bid_file_extension =  static::calculateFileExtension($file_name);
+    }
+    protected function get_file_extension(): ?string {
+        return $this->bid_file_extension;
+    }
+
+    protected function get_file_human_name(): ?string {
+        return $this->bid_file_human_name;
+    }
+
+    protected function set_file_human_name(?string $human_name)  {
+        $this->bid_file_human_name = $human_name;
+    }
 
     protected static function get_default_image_url(): string {
         return ScmServiceProvider::getMissingFileImage();
@@ -273,6 +284,22 @@ class ScmPluginBidFile extends Model implements IScmFileHandling
 
 
     protected function get_ref_uuid(): ?string {
+        return null;
+    }
+
+    /**
+     * override to allow plugin to work in earlier cores, can remove this later
+     * @param string $file_name
+     * @return string|null
+     */
+    public static function calculateFileExtension(string $file_name) :?string
+    {
+        if ( $file_name) {
+            $file_parts = pathinfo($file_name);
+            if (($file_parts['extension']??null)) {
+                return $file_parts['extension'];
+            }
+        }
         return null;
     }
 }

@@ -1,10 +1,13 @@
-# version 1.1.24   July 20,2025
+# version 1.0.25   Aug 7,2025
+* updating file handling from downstream trait
+
+# version 1.0.24   July 20,2025
 * Now using trait to do file logic, will only work for core 1.5.34 and above
 
-* # version 1.1.23   July 20,2025
+* # version 1.0.23   July 20,2025
 * BUGFIX absolute path of file used in error handling
 
-* # version 1.1.22   July 18,2025
+* # version 1.0.22   July 18,2025
 * Updated lightbox code and route notation
 
 # version 1.0.21  June 25 2025

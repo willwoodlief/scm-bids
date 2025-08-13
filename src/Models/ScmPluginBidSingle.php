@@ -244,15 +244,13 @@ class ScmPluginBidSingle extends Model
         $ret = null;
         try {
             if ($field) {
-                $ret = $this->where($field, $value)->first();
+                $ret = static::getBuilderForBid()->where($field, $value);
             } else {
                 if (ctype_digit($value)) {
-                    $ret = $this->where('id', $value)->first();
+                    $ret = static::getBuilderForBid(me_id: $value);
                 }
             }
-            if ($ret) {
-                $ret = static::getBuilderForBid(me_id: $ret->id)->first();
-            }
+            $ret = $ret?->first();
         } finally {
             if (empty($ret)) {
                 if (request()->ajax()) {
