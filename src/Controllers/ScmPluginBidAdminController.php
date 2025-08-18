@@ -10,6 +10,7 @@ use App\Http\Controllers\ContractorsController;
 use App\Http\Requests\ContractorSaveRequest;
 use App\Models\Contractor;
 
+use App\Models\Enums\TypeOfPermissionLogic;
 use App\Models\Enums\UnitOfStat;
 use App\Models\Project;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -178,7 +179,7 @@ class ScmPluginBidAdminController extends BaseController
         if ($request->ajax()) {
             return response()->json(['success' => true, 'file' => $bid_file]);
         } else {
-            return redirect()->route('scm-bid.bid.edit',['single_bid'=>$bid_file->file_bid->id]);
+            return redirect()->back();
         }
     }
 
@@ -225,7 +226,12 @@ class ScmPluginBidAdminController extends BaseController
     }
 
     public function show_bid(ScmPluginBidSingle $bid) {
-        return view(ScmPluginBid::getBladeRoot().'::bids/show-bid',['bid'=>$bid]);
+        $b_edit = Utilities::get_logged_user()->has_permission(
+            permission_names: [PluginPermissions::PERMISSION_BID_EDIT, PluginPermissions::PERMISSION_BID_PER_EDIT],
+            logic: TypeOfPermissionLogic::ONE_OF_THESE_PERMISSIONS,
+            per_unit: PluginPermissions::PERMISSION_BID_UNIT_NAME, per_unit_id: $bid->id);
+
+        return view(ScmPluginBid::getBladeRoot().'::bids/show-bid',['bid'=>$bid,'b_edit'=>$b_edit]);
     }
 
     /**
@@ -304,6 +310,11 @@ class ScmPluginBidAdminController extends BaseController
             DB::rollback();
             throw $e;
         }
+    }
+
+    public function get_bids_image_gallery(ScmPluginBidSingle $bid) {
+        $html =  view('shared.documents.documents-gallery-shown',['project_files'=>$bid->bid_files])->render();
+        return response()->json(['success' => true,  'html' => $html]);
     }
 
 

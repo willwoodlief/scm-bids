@@ -40,6 +40,7 @@ Route::middleware([CheckFrontEndDisable::class])->group(function () {
             Route::middleware([CanViewBid::class])->prefix('bid/{single_bid}')->group(function () {
 
                 Route::get('show', [ScmPluginBidAdminController::class, 'show_bid'])->name('scm-bid.bid.show');
+                Route::get('image_gallery', [ScmPluginBidAdminController::class, 'get_bids_image_gallery'])->name('scm-bid.bid.image_gallery');
 
 
                 Route::middleware([CanEditBid::class])->group(function () {

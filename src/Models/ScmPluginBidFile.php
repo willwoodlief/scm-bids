@@ -1,6 +1,7 @@
 <?php
 namespace Scm\PluginBid\Models;
 
+use App\Models\Enums\TypeOfImageProcessingPolicy;
 use App\Models\Project;
 use App\Models\ProjectFile;
 use App\Models\Traits\IScmFileHandling;
@@ -36,6 +37,7 @@ use App\Models\Enums\TypeOfAcceptedFile;
  * @property string bid_file_extension
  * @property string bid_file_name
  * @property string bid_thumbnail_name
+ * @property string original_file_name
  * @property string bid_file_human_name
  * @property string bid_file_mime_type
  *
@@ -139,7 +141,6 @@ class ScmPluginBidFile extends Model implements IScmFileHandling
             $bid_file->bid_file_category = TypeOfAcceptedFile::UNKNOWN;
             $bid_file->save();
             $bid_file->processUploadedFile(file: $file);
-            $bid_file->save();
             return $bid_file;
 
         } catch (\Exception $what) {
@@ -231,19 +232,25 @@ class ScmPluginBidFile extends Model implements IScmFileHandling
         return $ret;
     }
 
+    public static function getImageProcessPolicy() : TypeOfImageProcessingPolicy { return TypeOfImageProcessingPolicy::JOB;}
+
     public function isImage() : bool {
         return str_contains($this->bid_file_mime_type,'image');
     }
 
-    protected function set_thumb_file_name(string $file_name) { $this->bid_thumbnail_name = $file_name;}
+    protected function set_thumb_file_name(?string $file_name) { $this->bid_thumbnail_name = $file_name;}
     protected function get_thumb_file_name(): ?string {return  $this->bid_thumbnail_name; }
 
-    protected function set_file_name(string $file_name) {$this->bid_file_name = $file_name; }
+    protected function set_file_name(?string $file_name) {$this->bid_file_name = $file_name; }
     protected function get_file_name(): ?string {return $this->bid_file_name;}
 
     protected function get_file_bytes(): ?int {return $this->bid_file_size_bytes;}
 
-    protected function get_file_created_ts(): ?int {return $this->created_at_ts??null;}
+
+    protected function get_file_created_ts(): ?int {
+        $carbon = \Carbon\Carbon::parse($this->created_at,'UTC')->timezone(config('app.timezone'));
+        return $carbon->getTimestamp();
+    }
 
     protected function set_file_extension(?string $file_name) {
         $this->bid_file_extension =  static::calculateFileExtension($file_name);
@@ -254,6 +261,10 @@ class ScmPluginBidFile extends Model implements IScmFileHandling
 
     protected function get_file_human_name(): ?string {
         return $this->bid_file_human_name;
+    }
+
+    protected function get_file_mime_type(): ?string {
+        return $this->bid_file_mime_type;
     }
 
     protected function set_file_human_name(?string $human_name)  {

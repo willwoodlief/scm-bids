@@ -75,6 +75,7 @@
             data: data,
             options: {
                 responsive: true,
+                colReorder: true,
                 scales: {
                     x: {
                         type: 'time',

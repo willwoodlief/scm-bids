@@ -52,7 +52,7 @@
                         data-sort="{{$stat->stat_contractor->getName()}}">
                         <a href="{{route('contractor.view',['contractor'=>$stat->stats_contractor_id])}}">
                             {{$stat->stat_contractor->getName()}}
-                            <img src="{{$stat->stat_contractor->getFileUrl()}}" alt=""
+                            <img src="{{$stat->stat_contractor->getFileUrl(thumbnail: true,b_use_reg_if_no_thumb: false)}}" alt=""
                                  style="height: 2rem; width: auto;" class="ms-1">
                         </a>
                     </td>
@@ -93,6 +93,7 @@
                 searching: true,
                 select: false,
                 responsive: true,
+                colReorder: true,
                 pageLength:12,
                 lengthChange:false ,
                 language: {

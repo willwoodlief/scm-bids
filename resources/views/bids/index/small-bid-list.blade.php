@@ -44,7 +44,7 @@
                         data-sort="{{$bid->bid_contractor->getName()}}">
                         <a href="{{route('contractor.view',['contractor'=>$bid->bid_contractor_id])}}">
                             {{$bid->bid_contractor->getName()}}
-                            <img src="{{$bid->bid_contractor->getFileUrl()}}" alt=""
+                            <img src="{{$bid->bid_contractor->getFileUrl(thumbnail: true,b_use_reg_if_no_thumb: false)}}" alt=""
                                  style="height: 2rem; width: auto;" class="ms-1">
                         </a>
                     </td>
@@ -79,6 +79,7 @@
                 searching: true,
                 select: false,
                 responsive: true,
+                colReorder: true,
                 pageLength: {{count($bids) + 2}},
                 lengthChange: true,
                 language: {

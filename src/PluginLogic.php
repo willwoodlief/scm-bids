@@ -3,6 +3,8 @@ namespace Scm\PluginBid;
 
 
 use App\Helpers\Utilities;
+use App\Models\Enums\TypeOfPermissionLogic;
+
 use App\Plugins\Plugin;
 
 use App\Plugins\PluginRef;
@@ -69,6 +71,20 @@ class PluginLogic extends Plugin {
             if (!$my_extra_size) {$my_extra_size = 0;}
             return $total_file_size + $my_extra_size;
         }, 20, 1);
+
+
+        Eventy::addFilter(Plugin::FILTER_FILE_TABLE_TYPE_CONTEXT_MENU,
+         function(string $html, string $file_type,\App\Models\Traits\IScmFileHandling|ScmPluginBidFile $file)
+         {
+             if ($file_type === 'bid_files') {
+
+                 $my_html = view(ScmPluginBid::getBladeRoot() . '::bids/shared/bid-file-context-menu',
+                     ['bid_file' => $file])->render();
+                 return $html . "\n" . $my_html;
+             }
+             return $html;
+         },
+         20, 3);
 
         /*
            Permissions below

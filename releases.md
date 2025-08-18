@@ -1,4 +1,10 @@
-# version 1.0.25   Aug 7,2025
+# version 1.0.26   Aug 16,2025
+* bids files now do delayed image processing
+* file display table uses the shared documents table, and delayed image gallery
+* displays now has draggable columns
+* minor tweaks for displaying thumbnails in the display rows
+
+* # version 1.0.25   Aug 7,2025
 * updating file handling from downstream trait
 
 # version 1.0.24   July 20,2025
