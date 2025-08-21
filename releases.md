@@ -1,3 +1,6 @@
+# version 1.0.27   Aug 20,2025
+* Fix styling for the pick contractor image preview
+
 # version 1.0.26   Aug 16,2025
 * bids files now do delayed image processing
 * file display table uses the shared documents table, and delayed image gallery

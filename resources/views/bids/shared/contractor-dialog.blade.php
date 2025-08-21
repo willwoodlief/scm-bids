@@ -4,7 +4,7 @@
     }
 
     .scm-show-url {
-        width: 5rem !important; height: auto;display: none; text-align: center;
+         height: auto;display: none; text-align: center;
     }
 
     .new-contractor-tingle #searchTextField {
