@@ -8,11 +8,13 @@ use App\Helpers\General\DownloadResponse;
 use App\Helpers\Utilities;
 use App\Http\Controllers\ContractorsController;
 use App\Http\Requests\ContractorSaveRequest;
+use App\Http\Requests\UploadFileRequest;
 use App\Models\Contractor;
 
 use App\Models\Enums\TypeOfPermissionLogic;
 use App\Models\Enums\UnitOfStat;
 use App\Models\Project;
+use App\Models\UserLog;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
@@ -146,6 +148,40 @@ class ScmPluginBidAdminController extends BaseController
     }
 
 
+    /**
+     * @throws \Exception
+     */
+    public function upload_bid_file(ScmPluginBidSingle $bid, UploadFileRequest $request)
+    {
+
+
+        $bid_file = null;
+        try {
+            DB::beginTransaction();
+            if ($request->hasFile('file')) {
+                $human_name = $request->request->getString('human_name');
+                $bid_file = ScmPluginBidFile::createBidFile(bid: $bid,file: $request->file('file'),human_name: $human_name);
+
+                //todo maybe add tag support
+                UserLog::addLog(action: sprintf("Uploaded file %s to bid %s ",
+                    $bid_file->getFileHumanName(),$bid->getName())
+                );
+            }
+            DB::commit();
+        } catch (\Exception $e ) {
+            $bid_file?->cleanupFileResources();
+            DB::rollBack();
+            throw  $e;
+        }
+
+
+        if ($request->ajax()) {
+            return response()->json(['success' => true, 'bid' => $bid,'bid_file'=>$bid_file]);
+        } else {
+            return redirect()->back();
+        }
+
+    }
 
     /**
      * @throws \Exception

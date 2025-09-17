@@ -136,9 +136,7 @@
         </div> <!-- container container-xl -->
 
 
-
-
-
+        @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/shared/file-dialog')
 
     @endsection
 @endcomponent

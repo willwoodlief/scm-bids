@@ -60,6 +60,7 @@ Route::middleware([CheckFrontEndDisable::class])->group(function () {
 
                     Route::middleware([CanEditBid::class])->group(function () {
                         Route::post('add', [ScmPluginBidAdminController::class, 'add_files'])->name('scm-bid.files.add');
+                        Route::post('create', [ScmPluginBidAdminController::class, 'upload_bid_file'])->name('scm-bid.files.create');
                         Route::delete('remove/{bid_file}', [ScmPluginBidAdminController::class, 'remove_file'])->name('scm-bid.files.remove');
                     });
                 }); //end files

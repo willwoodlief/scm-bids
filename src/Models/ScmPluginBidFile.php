@@ -131,7 +131,7 @@ class ScmPluginBidFile extends Model implements IScmFileHandling
     /**
      * @throws \Exception
      */
-    public static function createBidFile(ScmPluginBidSingle $bid, UploadedFile $file) : ScmPluginBidFile {
+    public static function createBidFile(ScmPluginBidSingle $bid, UploadedFile $file,?string $human_name = null) : ScmPluginBidFile {
 
         $bid_file = null;
         try {
@@ -140,7 +140,7 @@ class ScmPluginBidFile extends Model implements IScmFileHandling
             $bid_file->uploaded_by_user_id = Auth::id();
             $bid_file->bid_file_category = TypeOfAcceptedFile::UNKNOWN;
             $bid_file->save();
-            $bid_file->processUploadedFile(file: $file);
+            $bid_file->processUploadedFile(file: $file,human_name: $human_name);
             return $bid_file;
 
         } catch (\Exception $what) {
@@ -290,7 +290,10 @@ class ScmPluginBidFile extends Model implements IScmFileHandling
         $this->bid_file_human_name = $human_name;
         $this->bid_file_size_bytes = $byte_size;
         $this->bid_file_mime_type = $mime_type;
-        $this->bid_file_category = $file_type;
+        if ($file_type) {
+            $this->bid_file_category = $file_type;
+        }
+
     }
 
 

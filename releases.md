@@ -1,4 +1,8 @@
-# version 1.0.27   Aug 20,2025
+# version 1.0.28   Aug 20,2025
+* BUGFIX could not upload images
+* BUGFIX could not open new file dialog
+
+* # version 1.0.27   Aug 20,2025
 * Fix styling for the pick contractor image preview
 
 # version 1.0.26   Aug 16,2025
