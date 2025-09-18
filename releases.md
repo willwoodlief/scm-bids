@@ -1,4 +1,8 @@
-# version 1.0.28   Aug 20,2025
+# version 1.0.29   Sep 18,2025
+* Now saves file category
+* Edit button moved
+
+* # version 1.0.28   Sept 17,2025
 * BUGFIX could not upload images
 * BUGFIX could not open new file dialog
 

@@ -47,11 +47,6 @@
                              Bid {{$bid->getName()}}
                         </li>
 
-                        <li class="breadcrumb-item">
-                            <a href="{{route('scm-bid.bid.edit',['single_bid'=>$bid->id])}}">
-                                Edit {{$bid->getName()}}
-                            </a>
-                        </li>
 
                     </ol>
                 </nav>
@@ -90,6 +85,11 @@
 
                             <i class="bi bi-x-octagon-fill"></i>
                         </button>
+
+
+                        <a href="{{route('scm-bid.bid.edit',['single_bid'=>$bid->id])}}" class="btn btn-secondary float-end">
+                            Edit {{$bid->getName()}}
+                        </a>
                     </div>
                     <div class="card-body">
                         <div class="row">

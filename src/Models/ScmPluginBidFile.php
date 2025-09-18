@@ -126,7 +126,12 @@ class ScmPluginBidFile extends Model implements IScmFileHandling
         return $build;
     }
 
+    const ACCEPTED_FILE_TYPES = [
+        TypeOfAcceptedFile::IMAGE,
+        TypeOfAcceptedFile::PDF
+    ];
 
+    public static function getFileCategoryWhitelist() : array { return static::ACCEPTED_FILE_TYPES;}
 
     /**
      * @throws \Exception
@@ -284,16 +289,17 @@ class ScmPluginBidFile extends Model implements IScmFileHandling
     }
 
     protected function fillFileAttributes(
-        string $mime_type,string $byte_size,string $human_name,?TypeOfAcceptedFile $file_type = null)
+        string $mime_type,string $byte_size,string $human_name)
     :void
     {
         $this->bid_file_human_name = $human_name;
         $this->bid_file_size_bytes = $byte_size;
         $this->bid_file_mime_type = $mime_type;
-        if ($file_type) {
-            $this->bid_file_category = $file_type;
-        }
 
+    }
+
+    protected function setFileCategory(TypeOfAcceptedFile $what) {
+        $this->bid_file_category = $what;
     }
 
 
