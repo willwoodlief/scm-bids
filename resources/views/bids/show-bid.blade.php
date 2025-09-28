@@ -53,79 +53,10 @@
             </section> <!-- /scm-page-header -->
 
             <section>
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">
-                            {{$bid->getName()}}
-                        </h4>
+                @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/show/bid-card',[
+                             'bid'=>$bid, 'b_edit' =>$b_edit
+                         ])
 
-                        <button type="button" class="btn btn-outline-success scm-plugin-bid-success-action "
-                                data-bid_name="{{str_replace('"','&quot;',$bid->getName())}}"
-                                data-url="{{route('scm-bid.bid.success',['single_bid'=>$bid->id])}}"
-                                data-method="post"
-                                title="Make into a project {{str_replace('"','&quot;',$bid->getName())}}"
-                        >
-                            <span class="me-1">
-                                Accepted!
-                            </span>
-
-                            <i class="bi bi-play-fill"></i>
-                        </button>
-
-                        <button type="button" class="btn  btn-outline-danger scm-plugin-bid-fail-action "
-                                data-bid_name="{{str_replace('"','&quot;',$bid->getName())}}"
-                                data-url="{{route('scm-bid.bid.fail',['single_bid'=>$bid->id])}}"
-                                data-method="delete"
-                                title="Remove bid as not accepted: {{str_replace('"','&quot;',$bid->getName())}}"
-                        >
-                            <span class="me-1">
-                                Not accepted
-                            </span>
-
-
-                            <i class="bi bi-x-octagon-fill"></i>
-                        </button>
-
-
-                        <a href="{{route('scm-bid.bid.edit',['single_bid'=>$bid->id])}}" class="btn btn-secondary float-end">
-                            Edit {{$bid->getName()}}
-                        </a>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-12 col-md-6">
-                                @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/show/contractor-unit',[
-                                   'contractor'=>$bid->bid_contractor
-                                ])
-                            </div>
-
-                            <div class="col-12 col-md-6">
-                                @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/show/bid-unit',[
-                                   'bid'=>$bid
-                                ])
-                            </div>
-
-                            <div class="col-12">
-                                <div class="card mt-4">
-                                    <div class="card-body">
-                                        <div style="white-space: pre">{{$bid->scratch_pad}}</div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <div class="row mt-4">
-                            @include('shared.documents.project_documents',
-                                   ['project_files'=>$bid->bid_files,'file_type' => 'bid_files',
-                                     'image_gallery_url' => route('scm-bid.bid.image_gallery',['single_bid'=>$bid])
-                                   ])
-                            @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot() . '::bids/shared/bid-file-context-scripts',
-                                        ['b_edit' => $b_edit])
-                        </div>
-
-                    </div> <!-- /card-body -->
-                </div> <!-- /card -->
             </section>
 
 
@@ -137,6 +68,7 @@
 
 
         @include(\Scm\PluginBid\Facades\ScmPluginBid::getBladeRoot().'::bids/shared/file-dialog')
+
 
     @endsection
 @endcomponent

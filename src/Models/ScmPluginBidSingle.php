@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Http\UploadedFile;
 use Scm\PluginBid\Exceptions\ScmPluginBidException;
 use Scm\PluginBid\Facades\ScmPluginBid;
+use Scm\PluginBid\Observers\EstimateObserver;
 
 
 /**
@@ -80,6 +81,10 @@ class ScmPluginBidSingle extends Model
             $bid_files = $bid->bid_files()->get();
             foreach ($bid_files as $file) {
                 $file->delete();
+            }
+
+            if (ScmPluginBid::isEstimatePluginInstalled()) {
+                EstimateObserver::disownEstimates(bid: $bid);
             }
 
             return true; //allow deletion
@@ -262,5 +267,6 @@ class ScmPluginBidSingle extends Model
         }
         return $ret;
     }
+
 
 }

@@ -1,10 +1,11 @@
 <?php
 namespace Scm\PluginBid;
 
-
 use Illuminate\Support\Facades\Route;
+use Plugins\Estimates\Models\Estimate;
 use Scm\PluginBid\Models\ScmPluginBidFile;
 use Scm\PluginBid\Models\ScmPluginBidSingle;
+use Scm\PluginBid\Observers\EstimateObserver;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -53,6 +54,10 @@ class ScmPluginBidProvider extends PackageServiceProvider
         Route::model('bid_file', ScmPluginBidFile::class);
         $this->plugin_logic = new PluginLogic();
         $this->plugin_logic->initialize();
+
+        if (\Scm\PluginBid\Facades\ScmPluginBid::isEstimatePluginInstalled()) {
+            Estimate::observe(EstimateObserver::class);
+        }
 
         return $this;
     }

@@ -1,4 +1,7 @@
-# version 1.0.29   Sep 18,2025
+# version 1.0.30   Sep 27,2025
+* Uses estimates plugin to adjust budget, and shows estimates associated with the bid
+
+* # version 1.0.29   Sep 18,2025
 * Now saves file category
 * Edit button moved
 

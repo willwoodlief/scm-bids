@@ -72,5 +72,11 @@ class ScmPluginBid
         return ScmPluginBidProvider::VIEW_BLADE_ROOT;
     }
 
+    public function isEstimatePluginInstalled() : bool {
+        $ref = PluginRef::findPluginByName('scm-plugin-estimates');
+        if (!$ref) {return false;}
+        return $ref->isActive();
+    }
+
 
 }

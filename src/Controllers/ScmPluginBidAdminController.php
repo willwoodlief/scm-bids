@@ -24,6 +24,7 @@ use Scm\PluginBid\Exceptions\ScmPluginBidException;
 use Scm\PluginBid\Helpers\PluginPermissions;
 use Scm\PluginBid\Models\Enums\TypeOfStat;
 use Scm\PluginBid\Models\ScmPluginBidFile;
+use Scm\PluginBid\Observers\EstimateObserver;
 use Scm\PluginBid\Requests\BidSaveRequest;
 use Scm\PluginBid\Facades\ScmPluginBid;
 use Scm\PluginBid\Models\ScmPluginBidSingle;
@@ -72,6 +73,9 @@ class ScmPluginBidAdminController extends BaseController
     }
 
 
+    /**
+     * @throws \Throwable
+     */
     public function get_new_contactor_form()
     {
         if (!Utilities::get_logged_user()->canCreateContractor()) {
@@ -84,7 +88,7 @@ class ScmPluginBidAdminController extends BaseController
     }
 
     /**
-     * @throws \Exception
+     * @throws \Exception|\Throwable
      */
     public function create_contractor(ContractorsController $con,ContractorSaveRequest $request) {
         try {
@@ -110,7 +114,7 @@ class ScmPluginBidAdminController extends BaseController
     /**
      * @param BidSaveRequest $request
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
-     * @throws \Exception
+     * @throws \Exception|\Throwable
      */
     public function create_bid(BidSaveRequest $request) {
 
@@ -149,7 +153,7 @@ class ScmPluginBidAdminController extends BaseController
 
 
     /**
-     * @throws \Exception
+     * @throws \Exception|\Throwable
      */
     public function upload_bid_file(ScmPluginBidSingle $bid, UploadFileRequest $request)
     {
@@ -184,7 +188,7 @@ class ScmPluginBidAdminController extends BaseController
     }
 
     /**
-     * @throws \Exception
+     * @throws \Exception|\Throwable
      */
     public function add_files(ScmPluginBidSingle $bid, Request $request) {
         /** @var ScmPluginBidFile[] $bid_files */
@@ -236,7 +240,7 @@ class ScmPluginBidAdminController extends BaseController
             file_human_name: $bid_file->bid_file_human_name,file_name: $bid_file->bid_file_name);
     }
     /**
-     * @throws \Exception
+     * @throws \Exception|\Throwable
      */
     public function update_bid(ScmPluginBidSingle $bid, BidSaveRequest $request) {
 
@@ -271,7 +275,7 @@ class ScmPluginBidAdminController extends BaseController
     }
 
     /**
-     * @throws \Exception
+     * @throws \Exception|\Throwable
      */
     public function bid_successful(ScmPluginBidSingle $bid,Request $request) {
 
@@ -301,6 +305,9 @@ class ScmPluginBidAdminController extends BaseController
 
             $stat = ScmPluginBidStat::markSuccessfulBid(bid: $bid,project_id: $project_id);
             $project_files = $bid->moveFilesToProject(project_id: $project_id,old_bid_files: $old_bid_files );
+            if (ScmPluginBid::isEstimatePluginInstalled()) {
+                EstimateObserver::shiftEstimatesToProject(bid: $bid,project_id: $project_id);
+            }
             $bid->delete();
             DB::commit();
             if ($request->ajax()) {
@@ -326,7 +333,7 @@ class ScmPluginBidAdminController extends BaseController
     }
 
     /**
-     * @throws \Exception
+     * @throws \Exception|\Throwable
      */
     public function bid_failed(ScmPluginBidSingle $bid,Request $request) {
 
@@ -348,6 +355,9 @@ class ScmPluginBidAdminController extends BaseController
         }
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function get_bids_image_gallery(ScmPluginBidSingle $bid) {
         $html =  view('shared.documents.documents-gallery-shown',['project_files'=>$bid->bid_files])->render();
         return response()->json(['success' => true,  'html' => $html]);
