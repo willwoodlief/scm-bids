@@ -75,7 +75,9 @@ class ScmPluginBid
     public function isEstimatePluginInstalled() : bool {
         $ref = PluginRef::findPluginByName('scm-plugin-estimates');
         if (!$ref) {return false;}
-        return $ref->isActive();
+        if (!$ref->isActive()) {return false;}
+        if (class_exists('Plugins\Estimates\Models\Estimate') ) {return true;}
+        return false;
     }
 
 
