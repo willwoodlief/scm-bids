@@ -47,6 +47,9 @@ use App\Models\Enums\TypeOfAcceptedFile;
  *
  * @property int created_at_ts
  * @property int updated_at_ts
+ *
+ * @property string link_type
+ * @property int link_id
 
  * @property User file_user
  * @property Project file_project
@@ -64,11 +67,24 @@ class ScmPluginBidFile extends Model implements IScmFileHandling
         'bid_file_category' => TypeOfAcceptedFile::class,
     ];
 
+    const LINK_TYPE_ESTIMATE = 'estimate';
 
+
+    const TEXT_FIELDS = [
+        'bid_file_human_name'
+    ];
     protected static function booted(): void
     {
         static::deleted(function (ScmPluginBidFile $bid_file) {
             $bid_file->cleanupFileResources();
+        });
+
+        static::retrieved(function (ScmPluginBidFile $model) {
+            foreach (static::TEXT_FIELDS as $field) {
+                if ($model->$field) {
+                    $model->$field = htmlspecialchars_decode($model->$field);
+                }
+            }
         });
     }
 

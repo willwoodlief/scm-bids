@@ -67,8 +67,28 @@ class ScmPluginBidSingle extends Model
         'scratch_pad'
     ];
 
+    const TEXT_FIELDS = [
+        'bid_name',
+        'address',
+        'city',
+        'state',
+        'zip',
+        'scratch_pad'
+    ];
+
+
+
     protected static function booted(): void
     {
+
+        static::retrieved(function (ScmPluginBidSingle $model) {
+            foreach (static::TEXT_FIELDS as $field) {
+                if ($model->$field) {
+                    $model->$field = htmlspecialchars_decode($model->$field);
+                }
+            }
+        });
+
         static::deleting(function (ScmPluginBidSingle $bid) {
 
             if (!$bid->id) {
@@ -140,16 +160,20 @@ class ScmPluginBidSingle extends Model
     }
 
     public static function getBid(
-        ?int $me_id = null,  ?int $contractor_id = null
+        ?int $me_id = null,  ?int $contractor_id = null,bool $b_throw_exception_if_missing = true
     )
-    : ScmPluginBidSingle
+    : ?ScmPluginBidSingle
     {
         $what =  static::getBuilderForBid(me_id: $me_id,contractor_id: $contractor_id)->first();
         if (!$what) {
             $reason = '';
             if ($me_id) { $reason .= "Using id of $me_id.";}
             if ($contractor_id) { $reason .= " Using contractor id of $contractor_id.";}
-            throw new ScmPluginBidException("Cannot find the bid $reason");
+            if ($b_throw_exception_if_missing) {
+                throw new ScmPluginBidException("Cannot find the bid $reason");
+            }
+            return null;
+
         }
         return $what;
     }

@@ -1,4 +1,9 @@
-# version 1.0.31   Sep 27,2025
+# version 1.0.32   Sep 27,2025
+* Saving and updating files created from the estimate pdf, reusing the file row and deleting older pdf from storage
+* Bid files now have a morph for arbitrary owners, and the estimate observer will add the estimate for the files tracked
+* Now unescaping text in models while retrieving data
+
+* # version 1.0.31   Sep 27,2025
 * Improved plugin estimate detection for edge case of installation
 
 * # version 1.0.30   Sep 27,2025
