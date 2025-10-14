@@ -1,3 +1,6 @@
+# version 1.0.33   Oct 14,2025
+* Added constants for file type
+
 # version 1.0.32   Sep 27,2025
 * Saving and updating files created from the estimate pdf, reusing the file row and deleting older pdf from storage
 * Bid files now have a morph for arbitrary owners, and the estimate observer will add the estimate for the files tracked

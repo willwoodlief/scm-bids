@@ -58,7 +58,7 @@ use App\Models\Enums\TypeOfAcceptedFile;
 class ScmPluginBidFile extends Model implements IScmFileHandling
 
 {
-    use HasFactory,ScmFileHandling;
+    use ScmFileHandling;
 
     protected $table = 'scm_plugin_bid_files';
     public $timestamps = false;
@@ -68,6 +68,9 @@ class ScmPluginBidFile extends Model implements IScmFileHandling
     ];
 
     const LINK_TYPE_ESTIMATE = 'estimate';
+
+    const FILE_MACHINE_TYPE = 'bid';
+    const FILE_HUMAN_TYPE = 'Bid';
 
 
     const TEXT_FIELDS = [
@@ -325,10 +328,10 @@ class ScmPluginBidFile extends Model implements IScmFileHandling
 
     /**
      * override to allow plugin to work in earlier cores, can remove this later
-     * @param string $file_name
+     * @param string|null $file_name
      * @return string|null
      */
-    public static function calculateFileExtension(string $file_name) :?string
+    public static function calculateFileExtension(?string $file_name) :?string
     {
         if ( $file_name) {
             $file_parts = pathinfo($file_name);
