@@ -1,7 +1,7 @@
 {
     "name": "scm/scm-plugin-bids",
     "description": "Keep track of bids, turn successful bids into projects",
-    "version": "1.0.33",
+    "version": "1.0.34",
     "keywords": [
         "scm",
         "laravel",

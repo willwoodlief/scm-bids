@@ -300,7 +300,10 @@ class ScmPluginBidFile extends Model implements IScmFileHandling
     }
 
     protected function get_file_directory_root(bool $b_thumbnail = false): string {
-        $what =  $this->file_bid->get_document_directory();
+        $what =  $this->file_bid?->get_document_directory()??null;
+        if (!$what) {
+            throw new ScmPluginBidException("No bid associated with this file");
+        }
         if ($b_thumbnail) {
             $what  .= DIRECTORY_SEPARATOR . 'thumbnails';
         }

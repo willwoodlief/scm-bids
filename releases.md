@@ -1,4 +1,7 @@
-# version 1.0.33   Oct 14,2025
+# version 1.0.33   Dec 17,2025
+* Fixed double deletion of files when bids deleted
+
+* # version 1.0.33   Oct 14,2025
 * Added constants for file type
 
 # version 1.0.32   Sep 27,2025

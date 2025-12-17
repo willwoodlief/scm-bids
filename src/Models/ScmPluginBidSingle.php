@@ -49,8 +49,6 @@ use Scm\PluginBid\Observers\EstimateObserver;
 class ScmPluginBidSingle extends Model
 
 {
-    use HasFactory;
-
     protected $table = 'scm_plugin_bid_singles';
     public $timestamps = false;
 
@@ -110,11 +108,7 @@ class ScmPluginBidSingle extends Model
             return true; //allow deletion
         });
 
-        static::deleted(function (ScmPluginBidSingle $bid) {
-            foreach ($bid->bid_files as $file) {
-                $file->delete();
-            }
-        });
+
 
         static::updated(function (ScmPluginBidSingle $bid) {
             if ( $bid->bid_stat ) {
