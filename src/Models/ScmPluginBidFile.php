@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Scm\PluginBid\Exceptions\ScmPluginBidException;
@@ -322,6 +323,11 @@ class ScmPluginBidFile extends Model implements IScmFileHandling
 
     protected function setFileCategory(TypeOfAcceptedFile $what) {
         $this->bid_file_category = $what;
+    }
+
+    public function getFileSiblings() : Collection {
+        $this->loadMissing('file_bid','file_bid.bid_files');
+        return $this->file_bid->bid_files;
     }
 
 

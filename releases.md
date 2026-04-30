@@ -1,4 +1,7 @@
-# version 1.0.33   Dec 17,2025
+# version 1.0.35   April 29,2026
+* Added upstream file handler function to get all siblings
+
+# version 1.0.34   Dec 17,2025
 * Fixed double deletion of files when bids deleted
 
 * # version 1.0.33   Oct 14,2025
